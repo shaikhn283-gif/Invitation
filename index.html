@@ -27,6 +27,7 @@
     user-select: none;
     -webkit-touch-callout: none; 
     -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
   }
   
   #mobile-frame {
@@ -37,14 +38,22 @@
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
 
+  /* Premium Envelope Layer */
   #envelope-screen {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     z-index: 50; transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.2s ease-in-out;
+    cursor: pointer;
+    touch-action: manipulation;
   }
   
-  .envelope-wrapper { position: relative; width: 340px; height: 230px; }
+  .envelope-wrapper { 
+    position: relative; 
+    width: 340px; 
+    height: 230px; 
+    pointer-events: none;
+  }
   .envelope-body {
     position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
     background: #04140d; border: 1px solid #144f37; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
@@ -65,6 +74,8 @@
     color: #fff; font-family: 'Cinzel Decorative', serif; font-size: 14px; font-weight: 700;
     z-index: 5; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
     animation: pulseSeal 2s infinite;
+    pointer-events: auto;
+    cursor: pointer;
     border: none; outline: none; appearance: none; -webkit-appearance: none;
   }
   .seal::after {
@@ -77,6 +88,14 @@
     100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
   }
 
+  .tap-instruction {
+    margin-top: 40px; color: var(--gold-light); font-style: italic; 
+    font-size: 16px; letter-spacing: 1px; animation: gentlePulse 2s infinite;
+    pointer-events: none;
+  }
+  @keyframes gentlePulse { 0% {opacity: 0.6;} 50% {opacity: 1;} 100% {opacity: 0.6;} }
+
+  /* Multi-Page Container */
   #pages-container {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: #222; z-index: 1; display: flex; flex-direction: column;
@@ -86,7 +105,7 @@
   .page {
     min-height: 100%; width: 100%; 
     padding: 15px; display: flex; flex-direction: column;
-    padding-bottom: 100px; /* Added massive padding to dodge ads */
+    padding-bottom: 80px;
   }
   
   #page-2 { display: none; opacity: 0; transition: opacity 1s ease-in; }
@@ -95,8 +114,7 @@
     position: relative; flex-grow: 1;
     background: radial-gradient(circle at center, #ffffff 0%, #fdf5e6 60%, #e8d5a5 100%);
     border-radius: 8px; 
-    padding: 35px 20px 100px 20px; /* Extra padding inside the card */
-    margin-bottom: 60px; /* Pushes the whole card up from the bottom edge */
+    padding: 35px 20px 60px 20px;
     box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.2), 0 10px 20px rgba(0,0,0,0.5);
     text-align: center;
   }
@@ -129,6 +147,7 @@
     background: transparent; border: 1px solid var(--gold); color: var(--primary);
     font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; font-style: italic;
     border-radius: 4px; cursor: pointer; transition: all 0.3s;
+    touch-action: manipulation;
   }
   .quiz-btn:active { transform: scale(0.98); }
   .quiz-btn.correct { background: var(--gold); color: #fff; border-color: var(--gold-dark); }
@@ -142,6 +161,7 @@
     border: none; border-radius: 25px; font-family: 'Cinzel Decorative', serif;
     font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease-in;
+    touch-action: manipulation;
   }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -208,12 +228,13 @@
 
 <div id="mobile-frame">
   <!-- Envelope Layer -->
-  <div id="envelope-screen">
+  <div id="envelope-screen" onclick="triggerOpen(event)" ontouchstart="triggerOpen(event)">
     <div class="envelope-wrapper">
       <div class="envelope-body"></div>
       <div class="envelope-flap" id="flap"></div>
-      <button class="seal" id="seal" onclick="triggerOpen()">OPEN</button>
+      <button class="seal" id="seal" onclick="triggerOpen(event)" ontouchstart="triggerOpen(event)">OPEN</button>
     </div>
+    <div class="tap-instruction">Tap anywhere to open</div>
   </div>
 
   <div id="pages-container">
@@ -308,23 +329,30 @@
 
   // 2. iOS Bulletproof Envelope Animation
   let isOpened = false;
-  function triggerOpen() {
+  function triggerOpen(e) {
+    if (e && e.stopPropagation) e.stopPropagation();
     if (isOpened) return;
     isOpened = true;
+    
     const flap = document.getElementById('flap');
     const seal = document.getElementById('seal');
     const envelopeScreen = document.getElementById('envelope-screen');
-    flap.style.opacity = '0';
-    seal.style.opacity = '0';
-    seal.style.animation = 'none';
-    seal.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    
+    if (flap) flap.style.opacity = '0';
+    if (seal) {
+      seal.style.opacity = '0';
+      seal.style.animation = 'none';
+      seal.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    }
+    
     setTimeout(() => {
       envelopeScreen.style.transform = 'translateY(100vh)';
       envelopeScreen.style.opacity = '0';
-    }, 500); 
+    }, 400); 
+    
     setTimeout(() => {
       envelopeScreen.style.display = 'none';
-    }, 1800);
+    }, 1500);
   }
 
   // 3. Quiz Logic
@@ -334,7 +362,6 @@
     const allBtns = document.querySelectorAll('.quiz-btn');
     allBtns.forEach(b => { b.classList.remove('correct', 'wrong'); });
     
-    // Unlock scrolling so they can scroll down past the ad
     document.getElementById('pages-container').style.overflowY = 'auto';
 
     if (isCorrect) {
@@ -342,7 +369,6 @@
       feedback.innerHTML = "Masha'Allah, that is correct! ✨";
       feedback.style.color = "var(--primary)";
       continueBtn.style.display = "block";
-      // Auto-scroll slightly to ensure button is visible
       setTimeout(() => {
           continueBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -379,9 +405,12 @@
     ctxHeart.fillStyle = gradient;
     ctxHeart.beginPath();
     ctxHeart.moveTo(125, 45); ctxHeart.bezierCurveTo(125, 35, 110, 10, 75, 10);
-    ctxHeart.bezierCurveTo(20, 10, 20, 75, 20, 75); ctxHeart.bezierCurveTo(20, 115, 75, 155, 125, 185);
-    ctxHeart.bezierCurveTo(175, 155, 230, 115, 230, 75); ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
-    ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45); ctxHeart.fill();
+    ctxHeart.bezierCurveTo(20, 10, 20, 75, 20, 75);
+    ctxHeart.bezierCurveTo(20, 115, 75, 155, 125, 185);
+    ctxHeart.bezierCurveTo(175, 155, 230, 115, 230, 75);
+    ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
+    ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45);
+    ctxHeart.fill();
     ctxHeart.lineWidth = 2; ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
     ctxHeart.stroke(); ctxHeart.restore();
   }
@@ -431,4 +460,35 @@
     gradient.addColorStop(0, '#E5C158'); gradient.addColorStop(0.5, '#D4AF37'); gradient.addColorStop(1, '#8A6511');
     ctxRect.fillStyle = gradient; ctxRect.fillRect(0, 0, canvasRect.width, canvasRect.height);
     ctxRect.fillStyle = "#062115"; ctxRect.font = "italic 18px 'Playfair Display'";
-    ctxRect.textAlign = "center"; ctxRect.fillText("Sc
+    ctxRect.textAlign = "center"; ctxRect.fillText("Scratch Here", canvasRect.width/2, canvasRect.height/2 + 6);
+    ctxRect.restore();
+  }
+  drawRectMask();
+  ctxRect.globalCompositeOperation = 'destination-out';
+  ctxRect.lineWidth = 35; ctxRect.lineCap = 'round'; ctxRect.lineJoin = 'round';
+  
+  let isDrawingRect = false;
+  function getPosRect(e) {
+    const rect = canvasRect.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+  function startDrawRect(e) { isDrawingRect = true; scratchRect(e); }
+  function endDrawRect() { isDrawingRect = false; ctxRect.beginPath(); }
+  function scratchRect(e) {
+    if (!isDrawingRect) return;
+    if(e.cancelable) e.preventDefault();
+    const pos = getPosRect(e);
+    ctxRect.lineTo(pos.x, pos.y); ctxRect.stroke();
+    ctxRect.beginPath(); ctxRect.moveTo(pos.x, pos.y);
+  }
+  canvasRect.addEventListener('mousedown', startDrawRect); canvasRect.addEventListener('mousemove', scratchRect);
+  canvasRect.addEventListener('mouseup', endDrawRect); canvasRect.addEventListener('mouseleave', endDrawRect);
+  canvasRect.addEventListener('touchstart', startDrawRect, { passive: false });
+  canvasRect.addEventListener('touchmove', scratchRect, { passive: false });
+  canvasRect.addEventListener('touchend', endDrawRect);
+
+</script>
+</body>
+</html>
