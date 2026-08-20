@@ -137,8 +137,8 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;          /* <- SCROLLING ENABLED */
-    -webkit-overflow-scrolling: touch;  /* smooth on iOS */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .page {
@@ -150,7 +150,6 @@
   }
 
   #page-2 { display: none; }
-  #page-2:target { display: flex; }
 
   .card-inner {
     position: relative;
@@ -247,7 +246,7 @@
     z-index: 1;
   }
 
-  /* Quiz Section - CSS Only */
+  /* Quiz Section */
   .quiz-section {
     margin-top: 30px;
     padding: 20px;
@@ -278,11 +277,7 @@
     margin-bottom: 15px;
     line-height: 1.5;
   }
-
-  .quiz-option input[type="radio"] {
-    display: none;
-  }
-  .quiz-option label {
+  .quiz-btn {
     display: block;
     width: 100%;
     padding: 12px;
@@ -298,22 +293,28 @@
     cursor: pointer;
     transition: all 0.3s;
     touch-action: manipulation;
-    text-align: center;
   }
-  .quiz-option label:active { transform: scale(0.98); }
-
-  #correct-answer:checked + label {
+  .quiz-btn:active { transform: scale(0.98); }
+  .quiz-btn.correct {
     background: var(--gold);
     color: #fff;
     border-color: var(--gold-dark);
   }
-  #wrong-answer:checked + label {
+  .quiz-btn.wrong {
     background: #e74c3c;
     color: #fff;
     border-color: #c0392b;
   }
 
-  .continue-link {
+  #quiz-feedback {
+    font-size: 15px;
+    color: var(--primary);
+    margin-top: 10px;
+    font-weight: 600;
+    min-height: 22px;
+  }
+
+  .continue-btn {
     display: none;
     margin: 20px auto 0;
     padding: 12px 30px;
@@ -327,11 +328,9 @@
     letter-spacing: 1px;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    text-decoration: none;
-    text-align: center;
-    display: inline-block;
+    touch-action: manipulation;
   }
-  #correct-answer:checked ~ .continue-link {
+  .continue-btn.show {
     display: block;
   }
 
@@ -525,24 +524,18 @@
         <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
         
-        <!-- CSS-only Quiz -->
+        <!-- Quiz with JavaScript -->
         <div class="quiz-section">
           <div class="quiz-unlock-heading">
             <span class="lock-icon">🔒</span> Answer to Unlock Invitation Details
           </div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
           
-          <div class="quiz-option">
-            <input type="radio" id="wrong-answer" name="quiz">
-            <label for="wrong-answer">Charity (Sadaqah)</label>
-          </div>
+          <button type="button" class="quiz-btn" data-correct="false">Charity (Sadaqah)</button>
+          <button type="button" class="quiz-btn" data-correct="true">Marriage (Nikah)</button>
           
-          <div class="quiz-option">
-            <input type="radio" id="correct-answer" name="quiz">
-            <label for="correct-answer">Marriage (Nikah)</label>
-          </div>
-          
-          <a href="#page-2" class="continue-link">Reveal Invitation Details →</a>
+          <div id="quiz-feedback"></div>
+          <button type="button" class="continue-btn" id="continue-btn">Reveal Invitation Details →</button>
         </div>
       </div>
     </div>
@@ -598,8 +591,40 @@
   </div>
 </div>
 
-<!-- Optional JavaScript for countdown and scratch -->
 <script>
+  // Quiz logic
+  const quizButtons = document.querySelectorAll('.quiz-btn');
+  const feedback = document.getElementById('quiz-feedback');
+  const continueBtn = document.getElementById('continue-btn');
+
+  quizButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const isCorrect = this.dataset.correct === 'true';
+      
+      // Reset all buttons
+      quizButtons.forEach(b => b.classList.remove('correct', 'wrong'));
+      
+      if (isCorrect) {
+        this.classList.add('correct');
+        feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+        feedback.style.color = "var(--primary)";
+        continueBtn.classList.add('show');
+      } else {
+        this.classList.add('wrong');
+        feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+        feedback.style.color = "#c0392b";
+        continueBtn.classList.remove('show');
+      }
+    });
+  });
+
+  // Go to page 2
+  continueBtn.addEventListener('click', function() {
+    document.getElementById('page-2').style.display = 'flex';
+    document.getElementById('page-1').style.display = 'none';
+    document.getElementById('pages-container').scrollTop = 0;
+  });
+
   // Countdown
   try {
     const targetDate = new Date(2026, 10, 17, 11, 0, 0).getTime();
