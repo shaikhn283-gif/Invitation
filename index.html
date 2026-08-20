@@ -330,6 +330,9 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     touch-action: manipulation;
   }
+  .continue-btn.show {
+    display: block;
+  }
 
   .details {
     font-size: 17px;
@@ -514,14 +517,21 @@
         <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
         
-        <!-- The Gamified Quiz with clear instruction -->
+        <!-- The Gamified Quiz with clear instruction and inline fallback -->
         <div class="quiz-section">
           <div class="quiz-unlock-heading">
             <span class="lock-icon">🔒</span> Answer to Unlock Invitation Details
           </div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
-          <button type="button" class="quiz-btn" data-correct="false">Charity (Sadaqah)</button>
-          <button type="button" class="quiz-btn" data-correct="true">Marriage (Nikah)</button>
+          
+          <!-- Wrong answer -->
+          <button type="button" class="quiz-btn" 
+                  onclick="handleAnswer(this, false)">Charity (Sadaqah)</button>
+          
+          <!-- Correct answer (inline fallback ensures continue button appears) -->
+          <button type="button" class="quiz-btn" 
+                  onclick="handleAnswer(this, true); document.getElementById('continue-btn').classList.add('show')">Marriage (Nikah)</button>
+          
           <div id="quiz-feedback"></div>
           <button type="button" class="continue-btn" id="continue-btn">Reveal Invitation Details →</button>
         </div>
@@ -597,47 +607,40 @@
 </script>
 
 <script>
-  // 2. Quiz logic
-  try {
-    function checkAnswer(btn, isCorrect) {
-      const feedback = document.getElementById('quiz-feedback');
-      const continueBtn = document.getElementById('continue-btn');
-      const allBtns = document.querySelectorAll('.quiz-btn');
-      allBtns.forEach(b => b.classList.remove('correct', 'wrong'));
+  // 2. Quiz logic (handleAnswer is global for inline onclick)
+  function handleAnswer(btn, isCorrect) {
+    const feedback = document.getElementById('quiz-feedback');
+    const continueBtn = document.getElementById('continue-btn');
+    const allBtns = document.querySelectorAll('.quiz-btn');
+    allBtns.forEach(b => b.classList.remove('correct', 'wrong'));
 
-      if (isCorrect) {
-        btn.classList.add('correct');
-        feedback.innerHTML = "Masha'Allah, that is correct! ✨";
-        feedback.style.color = "var(--primary)";
-        continueBtn.style.display = "block";
-      } else {
-        btn.classList.add('wrong');
-        feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
-        feedback.style.color = "#c0392b";
-        continueBtn.style.display = "none";
-      }
+    if (isCorrect) {
+      btn.classList.add('correct');
+      feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+      feedback.style.color = "var(--primary)";
+      continueBtn.classList.add('show');
+    } else {
+      btn.classList.add('wrong');
+      feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+      feedback.style.color = "#c0392b";
+      continueBtn.classList.remove('show');
     }
+  }
 
-    document.querySelectorAll('.quiz-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const isCorrect = this.dataset.correct === 'true';
-        checkAnswer(this, isCorrect);
-      });
-    });
-
-    function goToPageTwo() {
-      const page2 = document.getElementById('page-2');
-      const container = document.getElementById('pages-container');
-      page2.style.display = 'flex';
-      container.style.overflowY = 'auto';
-      try {
-        page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch (e) {
-        page2.scrollIntoView();
-      }
+  // Go to page two
+  function goToPageTwo() {
+    const page2 = document.getElementById('page-2');
+    const container = document.getElementById('pages-container');
+    page2.style.display = 'flex';
+    container.style.overflowY = 'auto';
+    try {
+      page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      page2.scrollIntoView();
     }
-    document.getElementById('continue-btn').addEventListener('click', goToPageTwo);
-  } catch (e) {}
+  }
+
+  document.getElementById('continue-btn').addEventListener('click', goToPageTwo);
 </script>
 
 <script>
