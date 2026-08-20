@@ -367,16 +367,11 @@
     font-style: italic;
     font-weight: 600;
   }
-  .scratch-hint {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 10px;
-  }
 
   .scratch-wrapper {
     position: relative;
     width: 250px;
-    height: 180px; /* slightly reduced */
+    height: 180px;
   }
   .secret-date {
     position: absolute;
@@ -403,6 +398,7 @@
     letter-spacing: 1px;
   }
 
+  /* Smooth fade-in for hidden elements */
   .hidden-reveal-container {
     margin-top: 25px;
     display: flex;
@@ -410,11 +406,16 @@
     align-items: center;
     opacity: 0;
     visibility: hidden;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 1.2s ease-in-out, max-height 1.2s ease-in-out, visibility 0s linear 1.2s;
     width: 100%;
   }
   .hidden-reveal-container.revealed {
     opacity: 1;
     visibility: visible;
+    max-height: 1000px;
+    transition: opacity 1.2s ease-in-out, max-height 1.2s ease-in-out, visibility 0s;
   }
 
   .countdown-title {
@@ -490,7 +491,7 @@
     top: 0;
     left: 0;
     z-index: 2;
-    touch-action: none;
+    touch-action: pan-y; /* Allow vertical scrolling on canvas */
     cursor: crosshair;
   }
 </style>
@@ -553,7 +554,6 @@
 
         <div class="scratch-section">
           <div class="scratch-title">Scratch the heart to reveal the date</div>
-          <div class="scratch-hint">(Scroll by swiping outside the scratch area)</div>
           <div class="scratch-wrapper" id="scratch-wrap">
             <div class="secret-date">
               <span>DATE OF DAWAT</span>
@@ -636,14 +636,14 @@
     setInterval(updateCountdown, 1000);
   } catch (e) {}
 
-  // Heart scratch
+  // Heart scratch with scroll support
   try {
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
     const wrapperHeart = document.getElementById('scratch-wrap');
     const hiddenElements = document.getElementById('hidden-elements');
     canvasHeart.width = 250;
-    canvasHeart.height = 180; // match CSS height
+    canvasHeart.height = 180;
 
     function drawHeartMask() {
       ctxHeart.save();
@@ -677,6 +677,8 @@
     let isDrawingHeart = false;
     let scratchTracker = 0;
     let isTimerRevealed = false;
+    let lastTouchY = 0;
+    let isScrolling = false;
 
     function getPosHeart(e) {
       const rect = canvasHeart.getBoundingClientRect();
@@ -684,37 +686,65 @@
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-    function startDrawHeart(e) { isDrawingHeart = true; wrapperHeart.style.animation = 'none'; scratchHeart(e); }
-    function endDrawHeart() { isDrawingHeart = false; ctxHeart.beginPath(); }
+
+    function startDrawHeart(e) {
+      isDrawingHeart = true;
+      isScrolling = false;
+      if (e.touches) {
+        lastTouchY = e.touches[0].clientY;
+      }
+      wrapperHeart.style.animation = 'none';
+      scratchHeart(e);
+    }
+
+    function endDrawHeart() {
+      isDrawingHeart = false;
+      ctxHeart.beginPath();
+    }
+
     function scratchHeart(e) {
       if (!isDrawingHeart) return;
+      
+      // Detect vertical scroll
+      if (e.touches && e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = Math.abs(currentY - lastTouchY);
+        if (deltaY > 10) {
+          isScrolling = true;
+          lastTouchY = currentY;
+          return; // Let the browser handle scrolling
+        }
+        lastTouchY = currentY;
+      }
+
+      if (isScrolling) return;
       if (e.cancelable) e.preventDefault();
+
       const pos = getPosHeart(e);
       ctxHeart.lineTo(pos.x, pos.y);
       ctxHeart.stroke();
       ctxHeart.beginPath();
       ctxHeart.moveTo(pos.x, pos.y);
+
       if (!isTimerRevealed) {
         scratchTracker++;
         if (scratchTracker > 35) {
           hiddenElements.classList.add('revealed');
-          setTimeout(() => {
-            try { hiddenElements.scrollIntoView({ behavior: 'smooth', block: 'end' }); } catch (e) { hiddenElements.scrollIntoView(); }
-          }, 500);
           isTimerRevealed = true;
         }
       }
     }
+
     canvasHeart.addEventListener('mousedown', startDrawHeart);
     canvasHeart.addEventListener('mousemove', scratchHeart);
     canvasHeart.addEventListener('mouseup', endDrawHeart);
     canvasHeart.addEventListener('mouseleave', endDrawHeart);
-    canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
-    canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
+    canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: true });
+    canvasHeart.addEventListener('touchmove', scratchHeart, { passive: true });
     canvasHeart.addEventListener('touchend', endDrawHeart);
   } catch (e) {}
 
-  // Rectangle scratch
+  // Rectangle scratch with scroll support
   try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
@@ -740,30 +770,63 @@
     ctxRect.lineWidth = 35;
     ctxRect.lineCap = 'round';
     ctxRect.lineJoin = 'round';
+    
     let isDrawingRect = false;
+    let lastTouchY = 0;
+    let isScrolling = false;
+
     function getPosRect(e) {
       const rect = canvasRect.getBoundingClientRect();
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-    function startDrawRect(e) { isDrawingRect = true; scratchRect(e); }
-    function endDrawRect() { isDrawingRect = false; ctxRect.beginPath(); }
+
+    function startDrawRect(e) {
+      isDrawingRect = true;
+      isScrolling = false;
+      if (e.touches) {
+        lastTouchY = e.touches[0].clientY;
+      }
+      scratchRect(e);
+    }
+
+    function endDrawRect() {
+      isDrawingRect = false;
+      ctxRect.beginPath();
+    }
+
     function scratchRect(e) {
       if (!isDrawingRect) return;
+      
+      // Detect vertical scroll
+      if (e.touches && e.touches.length > 0) {
+        const currentY = e.touches[0].clientY;
+        const deltaY = Math.abs(currentY - lastTouchY);
+        if (deltaY > 10) {
+          isScrolling = true;
+          lastTouchY = currentY;
+          return;
+        }
+        lastTouchY = currentY;
+      }
+
+      if (isScrolling) return;
       if (e.cancelable) e.preventDefault();
+
       const pos = getPosRect(e);
       ctxRect.lineTo(pos.x, pos.y);
       ctxRect.stroke();
       ctxRect.beginPath();
       ctxRect.moveTo(pos.x, pos.y);
     }
+
     canvasRect.addEventListener('mousedown', startDrawRect);
     canvasRect.addEventListener('mousemove', scratchRect);
     canvasRect.addEventListener('mouseup', endDrawRect);
     canvasRect.addEventListener('mouseleave', endDrawRect);
-    canvasRect.addEventListener('touchstart', startDrawRect, { passive: false });
-    canvasRect.addEventListener('touchmove', scratchRect, { passive: false });
+    canvasRect.addEventListener('touchstart', startDrawRect, { passive: true });
+    canvasRect.addEventListener('touchmove', scratchRect, { passive: true });
     canvasRect.addEventListener('touchend', endDrawRect);
   } catch (e) {}
 </script>
