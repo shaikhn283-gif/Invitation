@@ -47,7 +47,6 @@
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
 
-  /* Envelope – click anywhere to open */
   #envelope-screen {
     position: absolute;
     top: 0;
@@ -126,7 +125,6 @@
     100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
   }
 
-  /* Scrollable Content */
   #pages-container {
     position: absolute;
     top: 0;
@@ -246,7 +244,6 @@
     z-index: 1;
   }
 
-  /* Quiz Section */
   .quiz-section {
     margin-top: 30px;
     padding: 20px;
@@ -398,7 +395,6 @@
     letter-spacing: 1px;
   }
 
-  /* Smooth fade-in */
   .hidden-reveal-container {
     margin-top: 25px;
     display: flex;
@@ -499,7 +495,6 @@
 <body>
 
 <div id="mobile-frame">
-  <!-- Envelope Layer -->
   <div id="envelope-screen" onclick="this.style.display='none'">
     <div class="envelope-wrapper">
       <div class="envelope-body"></div>
@@ -508,10 +503,8 @@
     </div>
   </div>
 
-  <!-- Scrollable Content -->
   <div id="pages-container">
     
-    <!-- PAGE 1 -->
     <div class="page" id="page-1">
       <div class="card-inner">
         <div class="luxury-border"></div>
@@ -523,7 +516,6 @@
         <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
         
-        <!-- Quiz with JavaScript -->
         <div class="quiz-section">
           <div class="quiz-unlock-heading">
             <span class="lock-icon">🔒</span> Answer to Unlock Invitation Details
@@ -539,7 +531,6 @@
       </div>
     </div>
 
-    <!-- PAGE 2 -->
     <div class="page" id="page-2">
       <div class="card-inner">
         <div class="luxury-border"></div>
@@ -594,9 +585,7 @@
   quizButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       const isCorrect = this.dataset.correct === 'true';
-      
       quizButtons.forEach(b => b.classList.remove('correct', 'wrong'));
-      
       if (isCorrect) {
         this.classList.add('correct');
         feedback.innerHTML = "Masha'Allah, that is correct! ✨";
@@ -636,7 +625,7 @@
     setInterval(updateCountdown, 1000);
   } catch (e) {}
 
-  // Heart scratch - SMOOTH, no scroll interference
+  // Heart scratch - SMOOTH
   try {
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
@@ -684,28 +673,23 @@
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-
     function startDrawHeart(e) {
       isDrawingHeart = true;
       wrapperHeart.style.animation = 'none';
       scratchHeart(e);
     }
-
     function endDrawHeart() {
       isDrawingHeart = false;
       ctxHeart.beginPath();
     }
-
     function scratchHeart(e) {
       if (!isDrawingHeart) return;
       if (e.cancelable) e.preventDefault();
-
       const pos = getPosHeart(e);
       ctxHeart.lineTo(pos.x, pos.y);
       ctxHeart.stroke();
       ctxHeart.beginPath();
       ctxHeart.moveTo(pos.x, pos.y);
-
       if (!isTimerRevealed) {
         scratchTracker++;
         if (scratchTracker > 35) {
@@ -724,7 +708,7 @@
     canvasHeart.addEventListener('touchend', endDrawHeart);
   } catch (e) {}
 
-  // Rectangle scratch - SMOOTH, no scroll interference
+  // Rectangle scratch - SMOOTH
   try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
@@ -759,21 +743,17 @@
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-
     function startDrawRect(e) {
       isDrawingRect = true;
       scratchRect(e);
     }
-
     function endDrawRect() {
       isDrawingRect = false;
       ctxRect.beginPath();
     }
-
     function scratchRect(e) {
       if (!isDrawingRect) return;
       if (e.cancelable) e.preventDefault();
-
       const pos = getPosRect(e);
       ctxRect.lineTo(pos.x, pos.y);
       ctxRect.stroke();
