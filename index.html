@@ -47,7 +47,7 @@
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
 
-  /* Envelope – clickable anywhere */
+  /* Envelope – click anywhere to open */
   #envelope-screen {
     position: absolute;
     top: 0;
@@ -126,7 +126,7 @@
     100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
   }
 
-  /* Content – now scrollable */
+  /* Scrollable Content */
   #pages-container {
     position: absolute;
     top: 0;
@@ -137,8 +137,8 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* <-- CHANGED FROM hidden TO auto */
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;          /* <- SCROLLING ENABLED */
+    -webkit-overflow-scrolling: touch;  /* smooth on iOS */
   }
 
   .page {
@@ -247,7 +247,7 @@
     z-index: 1;
   }
 
-  /* Quiz Section */
+  /* Quiz Section - CSS Only */
   .quiz-section {
     margin-top: 30px;
     padding: 20px;
@@ -510,7 +510,7 @@
     </div>
   </div>
 
-  <!-- Multi-Page Container (scrollable) -->
+  <!-- Scrollable Content -->
   <div id="pages-container">
     
     <!-- PAGE 1 -->
@@ -598,9 +598,9 @@
   </div>
 </div>
 
-<!-- JavaScript for optional extras -->
+<!-- Optional JavaScript for countdown and scratch -->
 <script>
-  // Countdown (optional)
+  // Countdown
   try {
     const targetDate = new Date(2026, 10, 17, 11, 0, 0).getTime();
     function updateCountdown() {
@@ -619,7 +619,7 @@
     setInterval(updateCountdown, 1000);
   } catch (e) {}
 
-  // Heart scratch (optional)
+  // Heart scratch
   try {
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
@@ -697,7 +697,7 @@
     canvasHeart.addEventListener('touchend', endDrawHeart);
   } catch (e) {}
 
-  // Rectangle scratch (optional)
+  // Rectangle scratch
   try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
