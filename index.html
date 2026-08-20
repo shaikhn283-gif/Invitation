@@ -47,7 +47,7 @@
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
 
-  /* Envelope – clickable anywhere (inline onclick) */
+  /* Envelope – clickable anywhere */
   #envelope-screen {
     position: absolute;
     top: 0;
@@ -126,7 +126,7 @@
     100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
   }
 
-  /* Content */
+  /* Content – now scrollable */
   #pages-container {
     position: absolute;
     top: 0;
@@ -137,7 +137,7 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    overflow-y: hidden;
+    overflow-y: auto; /* <-- CHANGED FROM hidden TO auto */
     -webkit-overflow-scrolling: touch;
   }
 
@@ -149,7 +149,6 @@
     flex-direction: column;
   }
 
-  /* Page 2 is hidden initially, shown when targeted via CSS */
   #page-2 { display: none; }
   #page-2:target { display: flex; }
 
@@ -248,7 +247,7 @@
     z-index: 1;
   }
 
-  /* Quiz Section - CSS only */
+  /* Quiz Section */
   .quiz-section {
     margin-top: 30px;
     padding: 20px;
@@ -280,7 +279,6 @@
     line-height: 1.5;
   }
 
-  /* Hide radio inputs, style labels as buttons */
   .quiz-option input[type="radio"] {
     display: none;
   }
@@ -304,7 +302,6 @@
   }
   .quiz-option label:active { transform: scale(0.98); }
 
-  /* Correct answer feedback */
   #correct-answer:checked + label {
     background: var(--gold);
     color: #fff;
@@ -316,7 +313,6 @@
     border-color: #c0392b;
   }
 
-  /* Continue button appears when correct answer is selected */
   .continue-link {
     display: none;
     margin: 20px auto 0;
@@ -403,7 +399,6 @@
     letter-spacing: 1px;
   }
 
-  /* Date is also shown as plain text below scratch */
   .plain-date {
     margin-top: 10px;
     font-size: 18px;
@@ -506,7 +501,7 @@
 <body>
 
 <div id="mobile-frame">
-  <!-- Envelope Layer – inline onclick for bulletproof opening -->
+  <!-- Envelope Layer -->
   <div id="envelope-screen" onclick="this.style.display='none'">
     <div class="envelope-wrapper">
       <div class="envelope-body"></div>
@@ -515,7 +510,7 @@
     </div>
   </div>
 
-  <!-- Multi-Page Container -->
+  <!-- Multi-Page Container (scrollable) -->
   <div id="pages-container">
     
     <!-- PAGE 1 -->
@@ -565,7 +560,6 @@
           Islam Pura, Nr Subjail Road
         </div>
         
-        <!-- Date shown in plain text (always visible) -->
         <div class="plain-date">
           <span style="font-family:'Cinzel Decorative',serif; font-size:14px; color:#99731c; font-weight:700;">DATE OF DAWAT</span><br>
           17 November 2026
@@ -604,7 +598,7 @@
   </div>
 </div>
 
-<!-- JavaScript for countdown and scratch (optional, degrades gracefully) -->
+<!-- JavaScript for optional extras -->
 <script>
   // Countdown (optional)
   try {
@@ -625,7 +619,7 @@
     setInterval(updateCountdown, 1000);
   } catch (e) {}
 
-  // Heart scratch
+  // Heart scratch (optional)
   try {
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
@@ -703,7 +697,7 @@
     canvasHeart.addEventListener('touchend', endDrawHeart);
   } catch (e) {}
 
-  // Rectangle scratch
+  // Rectangle scratch (optional)
   try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
