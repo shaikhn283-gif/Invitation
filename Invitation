@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Invitation | Nawaz & Turfa</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #062115;
+    --primary-light: #0A3323;
+    --gold: #D4AF37;
+    --gold-dark: #99731c;
+    --gold-light: #FDF5E6;
+    --ivory: #FDFBF7;
+    --text-dark: #1a1a1a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    font-family: 'Playfair Display', serif;
+    background-color: #111;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh; height: 100dvh; 
+    overflow: hidden;
+    -webkit-user-select: none; 
+    user-select: none;
+    -webkit-touch-callout: none; 
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  #mobile-frame {
+    width: 100%; max-width: 414px; 
+    height: 100vh; height: 100dvh; 
+    position: relative;
+    background-color: #000; overflow: hidden;
+    box-shadow: 0 0 40px rgba(0,0,0,0.8);
+  }
+
+  #envelope-screen {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 50; transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.2s ease-in-out;
+  }
+  
+  .envelope-wrapper { position: relative; width: 340px; height: 230px; }
+  .envelope-body {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+    background: #04140d; border: 1px solid #144f37; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  }
+  .envelope-flap {
+    position: absolute; top: -50px; left: 0; width: 0; height: 0;
+    border-left: 170px solid transparent; border-right: 170px solid transparent;
+    border-top: 160px solid #072b1c; transition: transform 0.8s ease, opacity 0.5s ease;
+    transform-origin: top center; z-index: 4; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+  }
+  
+  .seal {
+    position: absolute; top: 110px; left: 50%; transform: translate(-50%, -50%);
+    width: 75px; height: 75px; border-radius: 50%;
+    background: radial-gradient(circle, #E5C158 0%, #D4AF37 40%, #8A6511 100%);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.6);
+    display: flex; justify-content: center; align-items: center;
+    color: #fff; font-family: 'Cinzel Decorative', serif; font-size: 14px; font-weight: 700;
+    z-index: 5; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+    animation: pulseSeal 2s infinite;
+    border: none; outline: none; appearance: none; -webkit-appearance: none;
+  }
+  .seal::after {
+    content: ''; position: absolute; width: 63px; height: 63px; border-radius: 50%;
+    border: 1.5px dotted rgba(255,255,255,0.5);
+  }
+  @keyframes pulseSeal {
+    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+  }
+
+  #pages-container {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #222; z-index: 1; display: flex; flex-direction: column;
+    overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
+  }
+  
+  .page {
+    min-height: 100%; width: 100%; 
+    padding: 15px; display: flex; flex-direction: column;
+    padding-bottom: 100px; /* Added massive padding to dodge ads */
+  }
+  
+  #page-2 { display: none; opacity: 0; transition: opacity 1s ease-in; }
+
+  .card-inner {
+    position: relative; flex-grow: 1;
+    background: radial-gradient(circle at center, #ffffff 0%, #fdf5e6 60%, #e8d5a5 100%);
+    border-radius: 8px; 
+    padding: 35px 20px 100px 20px; /* Extra padding inside the card */
+    margin-bottom: 60px; /* Pushes the whole card up from the bottom edge */
+    box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.2), 0 10px 20px rgba(0,0,0,0.5);
+    text-align: center;
+  }
+
+  .luxury-border {
+    position: absolute; top: 15px; bottom: 15px; left: 15px; right: 15px;
+    border: 1px solid var(--gold); pointer-events: none; z-index: 0;
+  }
+  .luxury-border::before, .luxury-border::after {
+    content: ''; position: absolute; width: calc(100% - 10px); height: calc(100% - 10px);
+    border: 1px solid rgba(212, 175, 55, 0.4); top: 4px; left: 4px;
+  }
+
+  .divider { display: flex; align-items: center; justify-content: center; margin: 20px 0; position: relative; z-index: 1; }
+  .divider::before, .divider::after { content: ''; height: 1px; width: 30%; background: linear-gradient(to right, transparent, var(--gold), transparent); }
+  .divider span { color: var(--gold); font-size: 14px; margin: 0 15px; }
+
+  .bismillah { font-family: 'Amiri', serif; font-size: 24px; color: var(--primary); margin-bottom: 10px; margin-top: 10px; position: relative; z-index: 1; }
+  .ayah { font-family: 'Amiri', serif; font-size: 22px; color: var(--gold-dark); line-height: 1.8; margin-bottom: 10px; text-shadow: 0 0 1px rgba(212, 175, 55, 0.5); position: relative; z-index: 1; }
+  
+  .couple { font-family: 'Great Vibes', cursive; font-size: 65px; color: var(--primary); margin: 5px 0; line-height: 1.1; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); position: relative; z-index: 1; }
+  .couple .heart { font-size: 30px; color: #a93226; font-family: sans-serif; display: inline-block; margin: 0 12px; }
+  
+  .invitation-text { font-size: 17px; color: var(--text-dark); font-style: italic; line-height: 1.6; position: relative; z-index: 1; }
+  
+  .quiz-section { margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.7); border: 1px solid var(--gold); border-radius: 8px; position: relative; z-index: 10; margin-bottom: 20px; }
+  .quiz-q { font-size: 16px; color: var(--primary); font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
+  .quiz-btn {
+    display: block; width: 100%; padding: 12px; margin-bottom: 10px;
+    background: transparent; border: 1px solid var(--gold); color: var(--primary);
+    font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; font-style: italic;
+    border-radius: 4px; cursor: pointer; transition: all 0.3s;
+  }
+  .quiz-btn:active { transform: scale(0.98); }
+  .quiz-btn.correct { background: var(--gold); color: #fff; border-color: var(--gold-dark); }
+  .quiz-btn.wrong { background: #e74c3c; color: #fff; border-color: #c0392b; }
+  
+  #quiz-feedback { font-size: 15px; color: var(--primary); margin-top: 10px; font-weight: 600; min-height: 22px; }
+  
+  .continue-btn {
+    display: none; margin: 20px auto 0; padding: 12px 30px;
+    background: var(--primary); color: var(--gold-light);
+    border: none; border-radius: 25px; font-family: 'Cinzel Decorative', serif;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease-in;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .details { font-size: 17px; color: var(--text-dark); line-height: 1.8; margin: 20px 0; position: relative; z-index: 1; }
+  .details .time { font-family: 'Cinzel Decorative', serif; font-weight: 700; color: var(--primary); font-size: 18px; display: block; margin-bottom: 8px; letter-spacing: 1px; }
+  
+  .scratch-section { margin-top: 20px; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
+  .scratch-title { font-size: 15px; color: var(--primary); margin-bottom: 15px; font-style: italic; font-weight: 600; }
+  
+  .scratch-wrapper { position: relative; width: 250px; height: 200px; animation: pulseHeart 3s infinite ease-in-out; }
+  @keyframes pulseHeart { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+  .secret-date {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-size: 32px; font-weight: 600; color: var(--primary); font-family: 'Playfair Display', serif; line-height: 1.2;
+  }
+  .secret-date span { font-family: 'Cinzel Decorative', serif; font-size: 14px; color: var(--gold-dark); margin-bottom: 5px; font-weight: 700; letter-spacing: 1px; }
+  
+  .hidden-reveal-container {
+    margin-top: 25px;
+    display: flex; flex-direction: column; align-items: center;
+    opacity: 0; 
+    visibility: hidden;
+    transition: opacity 1.5s ease-in;
+    width: 100%;
+  }
+  .hidden-reveal-container.revealed {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .countdown-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 14px; color: var(--gold-dark); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;
+  }
+  .countdown { display: flex; gap: 12px; margin-bottom: 30px; }
+  .time-box {
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold);
+    padding: 8px 12px; border-radius: 6px; min-width: 55px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  .time-box span { font-size: 20px; color: var(--primary); font-weight: 700; font-family: 'Playfair Display', serif; }
+  .time-box p { font-size: 10px; color: var(--gold-dark); text-transform: uppercase; font-family: sans-serif; letter-spacing: 1px; margin-top: 2px; font-weight: bold; }
+  
+  .scratch-wrapper-rect { 
+    position: relative; width: 280px; height: 110px; 
+    border-radius: 6px; overflow: hidden; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 1px solid var(--gold); 
+  }
+  .secret-translation {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    padding: 15px; font-size: 15px; color: var(--primary); 
+    font-family: 'Playfair Display', serif; font-style: italic; line-height: 1.5; 
+    background: rgba(253, 245, 230, 0.9); text-align: center;
+  }
+  
+  canvas { position: absolute; top: 0; left: 0; z-index: 2; touch-action: none; cursor: crosshair; }
+</style>
+</head>
+<body>
+
+<div id="mobile-frame">
+  <!-- Envelope Layer -->
+  <div id="envelope-screen">
+    <div class="envelope-wrapper">
+      <div class="envelope-body"></div>
+      <div class="envelope-flap" id="flap"></div>
+      <button class="seal" id="seal" onclick="triggerOpen()">OPEN</button>
+    </div>
+  </div>
+
+  <div id="pages-container">
+    
+    <!-- PAGE 1: The Blessing & Quiz -->
+    <div class="page" id="page-1">
+      <div class="card-inner">
+        <div class="luxury-border"></div>
+        <div class="bismillah" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        <div class="ayah" dir="rtl">يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا...</div>
+        
+        <div class="divider"><span>✦</span></div>
+        <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
+        <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
+        <div class="divider"><span>✦</span></div>
+        
+        <!-- The Gamified Quiz -->
+        <div class="quiz-section">
+          <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
+          <button class="quiz-btn" onclick="checkAnswer(this, false)">Charity (Sadaqah)</button>
+          <button class="quiz-btn" onclick="checkAnswer(this, true)">Marriage (Nikah)</button>
+          <div id="quiz-feedback"></div>
+          <button class="continue-btn" id="continue-btn" onclick="goToPageTwo()">Continue to Invitation</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: The Details & Scratch Off -->
+    <div class="page" id="page-2">
+      <div class="card-inner">
+        <div class="luxury-border"></div>
+        <br>
+        <div class="couple" style="font-size: 50px;">The Details</div>
+        <div class="divider"><span>✦</span></div>
+        
+        <div class="details">
+          <span class="time">11:00 in the morning</span>
+          Islam Pura, Nr Subjail Road
+        </div>
+        
+        <div class="scratch-section">
+          <div class="scratch-title">Please scratch the heart to reveal the date</div>
+          <div class="scratch-wrapper" id="scratch-wrap">
+            <div class="secret-date">
+              <span>DATE OF DAWAT</span>
+              17 November<br>2026
+            </div>
+            <canvas id="scratch-pad"></canvas>
+          </div>
+          
+          <div class="hidden-reveal-container" id="hidden-elements">
+            <div class="countdown-title">Time Until Dawat</div>
+            <div class="countdown">
+              <div class="time-box"><span id="cd-days">00</span><p>Days</p></div>
+              <div class="time-box"><span id="cd-hours">00</span><p>Hrs</p></div>
+              <div class="time-box"><span id="cd-mins">00</span><p>Mins</p></div>
+            </div>
+
+            <div class="scratch-title">Scratch for the Ayah Translation</div>
+            <div class="scratch-wrapper-rect">
+              <div class="secret-translation">
+                "O mankind, fear your Lord, who created you from one soul and created from it its mate..."
+              </div>
+              <canvas id="scratch-pad-rect"></canvas>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // 1. Live Countdown Logic
+  const targetDate = new Date("Nov 17, 2026 11:00:00").getTime();
+  function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    if (distance > 0) {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById("cd-days").innerText = days < 10 ? "0" + days : days;
+      document.getElementById("cd-hours").innerText = hours < 10 ? "0" + hours : hours;
+      document.getElementById("cd-mins").innerText = minutes < 10 ? "0" + minutes : minutes;
+    }
+  }
+  updateCountdown(); 
+  setInterval(updateCountdown, 1000);
+
+  // 2. iOS Bulletproof Envelope Animation
+  let isOpened = false;
+  function triggerOpen() {
+    if (isOpened) return;
+    isOpened = true;
+    const flap = document.getElementById('flap');
+    const seal = document.getElementById('seal');
+    const envelopeScreen = document.getElementById('envelope-screen');
+    flap.style.opacity = '0';
+    seal.style.opacity = '0';
+    seal.style.animation = 'none';
+    seal.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    setTimeout(() => {
+      envelopeScreen.style.transform = 'translateY(100vh)';
+      envelopeScreen.style.opacity = '0';
+    }, 500); 
+    setTimeout(() => {
+      envelopeScreen.style.display = 'none';
+    }, 1800);
+  }
+
+  // 3. Quiz Logic
+  function checkAnswer(btn, isCorrect) {
+    const feedback = document.getElementById('quiz-feedback');
+    const continueBtn = document.getElementById('continue-btn');
+    const allBtns = document.querySelectorAll('.quiz-btn');
+    allBtns.forEach(b => { b.classList.remove('correct', 'wrong'); });
+    
+    // Unlock scrolling so they can scroll down past the ad
+    document.getElementById('pages-container').style.overflowY = 'auto';
+
+    if (isCorrect) {
+      btn.classList.add('correct');
+      feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+      feedback.style.color = "var(--primary)";
+      continueBtn.style.display = "block";
+      // Auto-scroll slightly to ensure button is visible
+      setTimeout(() => {
+          continueBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    } else {
+      btn.classList.add('wrong');
+      feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+      feedback.style.color = "#c0392b";
+      continueBtn.style.display = "none";
+    }
+  }
+
+  // 4. Page Transition
+  function goToPageTwo() {
+    const page2 = document.getElementById('page-2');
+    page2.style.display = 'flex';
+    setTimeout(() => {
+      page2.style.opacity = '1';
+      page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  // 5. HEART Scratch Canvas Logic
+  const canvasHeart = document.getElementById('scratch-pad');
+  const ctxHeart = canvasHeart.getContext('2d');
+  const wrapperHeart = document.getElementById('scratch-wrap');
+  const hiddenElements = document.getElementById('hidden-elements');
+  canvasHeart.width = 250; canvasHeart.height = 200;
+
+  function drawHeartMask() {
+    ctxHeart.save();
+    let gradient = ctxHeart.createLinearGradient(0, 0, canvasHeart.width, canvasHeart.height);
+    gradient.addColorStop(0, '#E5C158'); gradient.addColorStop(0.3, '#FDF5E6');
+    gradient.addColorStop(0.5, '#D4AF37'); gradient.addColorStop(1, '#8A6511');
+    ctxHeart.fillStyle = gradient;
+    ctxHeart.beginPath();
+    ctxHeart.moveTo(125, 45); ctxHeart.bezierCurveTo(125, 35, 110, 10, 75, 10);
+    ctxHeart.bezierCurveTo(20, 10, 20, 75, 20, 75); ctxHeart.bezierCurveTo(20, 115, 75, 155, 125, 185);
+    ctxHeart.bezierCurveTo(175, 155, 230, 115, 230, 75); ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
+    ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45); ctxHeart.fill();
+    ctxHeart.lineWidth = 2; ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctxHeart.stroke(); ctxHeart.restore();
+  }
+  drawHeartMask();
+  ctxHeart.globalCompositeOperation = 'destination-out';
+  ctxHeart.lineWidth = 42; ctxHeart.lineCap = 'round'; ctxHeart.lineJoin = 'round';
+  
+  let isDrawingHeart = false; let scratchTracker = 0; let isTimerRevealed = false;
+  
+  function getPosHeart(e) {
+    const rect = canvasHeart.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  }
+  function startDrawHeart(e) { isDrawingHeart = true; wrapperHeart.style.animation = 'none'; scratchHeart(e); }
+  function endDrawHeart() { isDrawingHeart = false; ctxHeart.beginPath(); }
+  function scratchHeart(e) {
+    if (!isDrawingHeart) return;
+    if(e.cancelable) e.preventDefault();
+    const pos = getPosHeart(e);
+    ctxHeart.lineTo(pos.x, pos.y); ctxHeart.stroke();
+    ctxHeart.beginPath(); ctxHeart.moveTo(pos.x, pos.y);
+    if (!isTimerRevealed) {
+      scratchTracker++;
+      if (scratchTracker > 35) { 
+        hiddenElements.classList.add('revealed');
+        setTimeout(() => { hiddenElements.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 500);
+        isTimerRevealed = true;
+      }
+    }
+  }
+  canvasHeart.addEventListener('mousedown', startDrawHeart); canvasHeart.addEventListener('mousemove', scratchHeart);
+  canvasHeart.addEventListener('mouseup', endDrawHeart); canvasHeart.addEventListener('mouseleave', endDrawHeart);
+  canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
+  canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
+  canvasHeart.addEventListener('touchend', endDrawHeart);
+
+  // 6. RECTANGLE Translation Scratch Canvas Logic
+  const canvasRect = document.getElementById('scratch-pad-rect');
+  const ctxRect = canvasRect.getContext('2d');
+  canvasRect.width = 280; canvasRect.height = 110;
+
+  function drawRectMask() {
+    ctxRect.save();
+    let gradient = ctxRect.createLinearGradient(0, 0, canvasRect.width, canvasRect.height);
+    gradient.addColorStop(0, '#E5C158'); gradient.addColorStop(0.5, '#D4AF37'); gradient.addColorStop(1, '#8A6511');
+    ctxRect.fillStyle = gradient; ctxRect.fillRect(0, 0, canvasRect.width, canvasRect.height);
+    ctxRect.fillStyle = "#062115"; ctxRect.font = "italic 18px 'Playfair Display'";
+    ctxRect.textAlign = "center"; ctxRect.fillText("Sc
