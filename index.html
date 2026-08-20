@@ -10,19 +10,21 @@
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-#envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#062115,#0A3323);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;transition:transform 0.8s ease-in-out,opacity 0.5s ease-in-out}
-#envelope.open{transform:translateY(-100%);opacity:0}
+/* Envelope */
+#envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#062115,#0A3323);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;transition:opacity 0.6s ease}
+#envelope.hide{opacity:0;pointer-events:none}
 
-.env-wrap{position:relative;width:340px;height:230px;perspective:1000px}
+.env-wrap{position:relative;width:340px;height:230px}
 .env-body{position:absolute;bottom:0;left:0;width:100%;height:100%;background:#04140d;border:1px solid #144f37;box-shadow:0 15px 35px rgba(0,0,0,0.6)}
-.env-flap{position:absolute;top:-50px;left:0;width:0;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:160px solid #072b1c;transform-origin:top center;z-index:4;transition:transform 0.7s ease-in-out,opacity 0.3s ease-in-out 0.4s}
-#envelope.open .env-flap{transform:rotateX(180deg);opacity:0}
+.env-flap{position:absolute;top:-50px;left:0;width:0;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:160px solid #0d3b28;transform-origin:top center;z-index:4;transition:transform 0.6s ease-in-out}
+#envelope.hide .env-flap{transform:rotateX(180deg)}
 
-.seal{position:absolute;top:110px;left:50%;transform:translate(-50%,-50%);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#E5C158,#D4AF37,#8A6511);display:flex;justify-content:center;align-items:center;color:#fff;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;z-index:5;animation:pulse 2s infinite;transition:opacity 0.4s ease-in-out,transform 0.4s ease-in-out}
-#envelope.open .seal{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
+.seal{position:absolute;top:110px;left:50%;transform:translate(-50%,-50%);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#E5C158,#D4AF37,#8A6511);display:flex;justify-content:center;align-items:center;color:#fff;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;z-index:5;animation:pulse 2s infinite;transition:opacity 0.3s ease,transform 0.3s ease}
+#envelope.hide .seal{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
 .seal:after{content:'';position:absolute;width:63px;height:63px;border-radius:50%;border:1.5px dotted rgba(255,255,255,0.5)}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.7)}70%{box-shadow:0 0 0 15px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 
+/* Pages */
 #pages{position:absolute;top:0;left:0;width:100%;height:100%;background:#222;z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{min-height:100%;width:100%;padding:15px}
 #page2{display:none}
@@ -89,7 +91,6 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
         <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
         <div class="invite">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
-        
         <div class="quiz">
           <div class="quiz-head">🔒 Answer to Unlock Invitation Details</div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
@@ -143,10 +144,10 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
 <script>
 function openEnvelope() {
   var envelope = document.getElementById('envelope');
-  envelope.classList.add('open');
+  envelope.classList.add('hide');
   setTimeout(function() {
     envelope.style.display = 'none';
-  }, 1200);
+  }, 600);
 }
 
 function checkAnswer(btn, isCorrect) {
@@ -198,7 +199,6 @@ try {
   var hidden = document.getElementById('hiddenElements');
   canvas.width = 250;
   canvas.height = 180;
-  
   ctx.save();
   var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, '#E5C158');
@@ -216,16 +216,13 @@ try {
   ctx.bezierCurveTo(140, 5, 125, 30, 125, 40);
   ctx.fill();
   ctx.restore();
-  
   ctx.globalCompositeOperation = 'destination-out';
   ctx.lineWidth = 42;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  
   var drawing = false;
   var tracker = 0;
   var revealed = false;
-  
   function getPos(e) {
     var rect = canvas.getBoundingClientRect();
     var x = e.touches ? e.touches[0].clientX : e.clientX;
@@ -265,7 +262,6 @@ try {
   var ctxR = canvasR.getContext('2d');
   canvasR.width = 280;
   canvasR.height = 110;
-  
   ctxR.save();
   var gradR = ctxR.createLinearGradient(0, 0, canvasR.width, canvasR.height);
   gradR.addColorStop(0, '#E5C158');
@@ -278,12 +274,10 @@ try {
   ctxR.textAlign = "center";
   ctxR.fillText("Scratch Here", canvasR.width / 2, canvasR.height / 2 + 6);
   ctxR.restore();
-  
   ctxR.globalCompositeOperation = 'destination-out';
   ctxR.lineWidth = 35;
   ctxR.lineCap = 'round';
   ctxR.lineJoin = 'round';
-  
   var drawingR = false;
   function getPosR(e) {
     var rect = canvasR.getBoundingClientRect();
