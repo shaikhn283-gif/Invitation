@@ -2,571 +2,129 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Invitation | Nawaz & Turfa</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #062115;
-    --primary-light: #0A3323;
-    --gold: #D4AF37;
-    --gold-dark: #99731c;
-    --gold-light: #FDF5E6;
-    --ivory: #FDFBF7;
-    --text-dark: #1a1a1a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
+#envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#062115,#0A3323);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer}
+.env-wrap{position:relative;width:340px;height:230px;pointer-events:none}
+.env-body{position:absolute;bottom:0;left:0;width:100%;height:100%;background:#04140d;border:1px solid #144f37}
+.env-flap{position:absolute;top:-50px;left:0;width:0;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:160px solid #072b1c;z-index:4}
+.seal{position:absolute;top:110px;left:50%;transform:translate(-50%,-50%);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#E5C158,#D4AF37,#8A6511);display:flex;justify-content:center;align-items:center;color:#fff;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;z-index:5;animation:pulse 2s infinite;pointer-events:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.7)}70%{box-shadow:0 0 0 15px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 
-  body {
-    font-family: 'Playfair Display', serif;
-    background-color: #111;
-    overflow: hidden;
-    -webkit-user-select: none;
-    user-select: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
-  }
+#pages{position:absolute;top:0;left:0;width:100%;height:100%;background:#222;z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{min-height:100%;width:100%;padding:15px}
+#page2{display:none}
+.card{position:relative;background:radial-gradient(circle,#fff,#fdf5e6,#e8d5a5);border-radius:8px;padding:35px 20px 60px;text-align:center;min-height:100%}
+.border{position:absolute;top:15px;bottom:15px;left:15px;right:15px;border:1px solid #D4AF37;pointer-events:none}
+.divider{display:flex;align-items:center;justify-content:center;margin:20px 0}
+.divider:before,.divider:after{content:'';height:1px;width:30%;background:linear-gradient(to right,transparent,#D4AF37,transparent)}
+.divider span{color:#D4AF37;margin:0 15px}
+.bismillah{font-family:'Amiri',serif;font-size:24px;color:#062115;margin:10px 0}
+.ayah{font-family:'Amiri',serif;font-size:22px;color:#99731c;line-height:1.8;margin-bottom:10px}
+.couple{font-family:'Great Vibes',cursive;font-size:65px;color:#062115;line-height:1.1}
+.couple .heart{font-size:30px;color:#a93226;display:inline-block;margin:0 12px}
+.invite{font-size:17px;color:#1a1a1a;font-style:italic;line-height:1.6}
 
-  #mobile-frame {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 100%;
-    max-width: 414px;
-    background-color: #000;
-    overflow: hidden;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-  }
+.quiz{margin-top:30px;padding:20px;background:rgba(255,255,255,.85);border:2px solid #D4AF37;border-radius:12px}
+.quiz-head{font-size:20px;font-weight:700;color:#062115;margin-bottom:10px}
+.quiz-q{font-size:16px;color:#062115;font-weight:600;margin-bottom:15px}
+.quiz-btn{display:block;width:100%;padding:12px;margin-bottom:10px;background:transparent;border:1px solid #D4AF37;color:#062115;font-family:'Playfair Display',serif;font-size:16px;font-weight:600;font-style:italic;border-radius:4px;cursor:pointer}
+.quiz-btn.correct{background:#D4AF37;color:#fff}
+.quiz-btn.wrong{background:#e74c3c;color:#fff;border-color:#c0392b}
+#feedback{font-size:15px;color:#062115;margin-top:10px;font-weight:600;min-height:22px}
+#continueBtn{display:none;margin:20px auto 0;padding:12px 30px;background:#062115;color:#FDF5E6;border:none;border-radius:25px;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;cursor:pointer}
+#continueBtn.show{display:block}
 
-  #envelope-screen {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 50;
-    cursor: pointer;
-    pointer-events: auto;
-  }
+.details{font-size:17px;color:#1a1a1a;line-height:1.8;margin:20px 0}
+.details .time{font-family:'Cinzel Decorative',serif;font-weight:700;color:#062115;font-size:18px;display:block;margin-bottom:8px}
+.scratch-section{margin-top:20px;display:flex;flex-direction:column;align-items:center}
+.scratch-title{font-size:15px;color:#062115;margin-bottom:15px;font-style:italic;font-weight:600}
+.scratch-wrap{position:relative;width:250px;height:180px}
+.secret-date{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:32px;font-weight:600;color:#062115;font-family:'Playfair Display',serif}
+.secret-date span{font-family:'Cinzel Decorative',serif;font-size:14px;color:#99731c;margin-bottom:5px;font-weight:700}
 
-  .envelope-wrapper { position: relative; width: 340px; height: 230px; pointer-events: none; }
-  .envelope-body {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #04140d;
-    border: 1px solid #144f37;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-  }
-  .envelope-flap {
-    position: absolute;
-    top: -50px;
-    left: 0;
-    width: 0;
-    height: 0;
-    border-left: 170px solid transparent;
-    border-right: 170px solid transparent;
-    border-top: 160px solid #072b1c;
-    transform-origin: top center;
-    z-index: 4;
-    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-  }
+.hidden{opacity:0;visibility:hidden;max-height:0;overflow:hidden;transition:opacity 1.2s,max-height 1.2s,visibility 0s 1.2s;width:100%;margin-top:25px;display:flex;flex-direction:column;align-items:center}
+.hidden.revealed{opacity:1;visibility:visible;max-height:1000px;transition:opacity 1.2s,max-height 1.2s,visibility 0s}
+.countdown-title{font-family:'Cinzel Decorative',serif;font-size:14px;color:#99731c;margin-bottom:8px;font-weight:700}
+.countdown{display:flex;gap:12px;margin-bottom:30px}
+.time-box{display:flex;flex-direction:column;align-items:center;background:rgba(212,175,55,.15);border:1px solid #D4AF37;padding:8px 12px;border-radius:6px;min-width:55px}
+.time-box span{font-size:20px;color:#062115;font-weight:700}
+.time-box p{font-size:10px;color:#99731c;text-transform:uppercase;font-family:sans-serif;letter-spacing:1px;margin-top:2px;font-weight:bold}
 
-  .seal {
-    position: absolute;
-    top: 110px;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #E5C158 0%, #D4AF37 40%, #8A6511 100%);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 14px;
-    font-weight: 700;
-    z-index: 5;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-    animation: pulseSeal 2s infinite;
-    pointer-events: none;
-  }
-  .seal::after {
-    content: '';
-    position: absolute;
-    width: 63px;
-    height: 63px;
-    border-radius: 50%;
-    border: 1.5px dotted rgba(255,255,255,0.5);
-  }
-  @keyframes pulseSeal {
-    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-  }
-
-  #pages-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #222;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .page {
-    min-height: 100%;
-    width: 100%;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-  }
-
-  #page-2 { display: none; }
-
-  .card-inner {
-    position: relative;
-    flex-grow: 1;
-    background: radial-gradient(circle at center, #ffffff 0%, #fdf5e6 60%, #e8d5a5 100%);
-    border-radius: 8px;
-    padding: 35px 20px 60px 20px;
-    box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.2), 0 10px 20px rgba(0,0,0,0.5);
-    text-align: center;
-  }
-
-  .luxury-border {
-    position: absolute;
-    top: 15px;
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
-    border: 1px solid var(--gold);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .luxury-border::before,
-  .luxury-border::after {
-    content: '';
-    position: absolute;
-    width: calc(100% - 10px);
-    height: calc(100% - 10px);
-    border: 1px solid rgba(212, 175, 55, 0.4);
-    top: 4px;
-    left: 4px;
-  }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px 0;
-    position: relative;
-    z-index: 1;
-  }
-  .divider::before,
-  .divider::after {
-    content: '';
-    height: 1px;
-    width: 30%;
-    background: linear-gradient(to right, transparent, var(--gold), transparent);
-  }
-  .divider span { color: var(--gold); font-size: 14px; margin: 0 15px; }
-
-  .bismillah {
-    font-family: 'Amiri', serif;
-    font-size: 24px;
-    color: var(--primary);
-    margin-bottom: 10px;
-    margin-top: 10px;
-    position: relative;
-    z-index: 1;
-  }
-  .ayah {
-    font-family: 'Amiri', serif;
-    font-size: 22px;
-    color: var(--gold-dark);
-    line-height: 1.8;
-    margin-bottom: 10px;
-    text-shadow: 0 0 1px rgba(212, 175, 55, 0.5);
-    position: relative;
-    z-index: 1;
-  }
-
-  .couple {
-    font-family: 'Great Vibes', cursive;
-    font-size: 65px;
-    color: var(--primary);
-    margin: 5px 0;
-    line-height: 1.1;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-    position: relative;
-    z-index: 1;
-  }
-  .couple .heart {
-    font-size: 30px;
-    color: #a93226;
-    font-family: sans-serif;
-    display: inline-block;
-    margin: 0 12px;
-  }
-
-  .invitation-text {
-    font-size: 17px;
-    color: var(--text-dark);
-    font-style: italic;
-    line-height: 1.6;
-    position: relative;
-    z-index: 1;
-  }
-
-  .quiz-section {
-    margin-top: 30px;
-    padding: 20px;
-    background: rgba(255,255,255,0.85);
-    border: 2px solid var(--gold);
-    border-radius: 12px;
-    position: relative;
-    z-index: 10;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  .quiz-unlock-heading {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 10px;
-    line-height: 1.4;
-    letter-spacing: 0.5px;
-  }
-  .quiz-unlock-heading .lock-icon {
-    font-size: 24px;
-    display: inline-block;
-    margin-right: 8px;
-  }
-  .quiz-q {
-    font-size: 16px;
-    color: var(--primary);
-    font-weight: 600;
-    margin-bottom: 15px;
-    line-height: 1.5;
-  }
-  .quiz-btn {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 10px;
-    background: transparent;
-    border: 1px solid var(--gold);
-    color: var(--primary);
-    font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    font-weight: 600;
-    font-style: italic;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s;
-    touch-action: manipulation;
-  }
-  .quiz-btn:active { transform: scale(0.98); }
-  .quiz-btn.correct {
-    background: var(--gold);
-    color: #fff;
-    border-color: var(--gold-dark);
-  }
-  .quiz-btn.wrong {
-    background: #e74c3c;
-    color: #fff;
-    border-color: #c0392b;
-  }
-
-  #quiz-feedback {
-    font-size: 15px;
-    color: var(--primary);
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 22px;
-  }
-
-  .continue-btn {
-    display: none;
-    margin: 20px auto 0;
-    padding: 12px 30px;
-    background: var(--primary);
-    color: var(--gold-light);
-    border: none;
-    border-radius: 25px;
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    touch-action: manipulation;
-  }
-  .continue-btn.show {
-    display: block;
-  }
-
-  .details {
-    font-size: 17px;
-    color: var(--text-dark);
-    line-height: 1.8;
-    margin: 20px 0;
-    position: relative;
-    z-index: 1;
-  }
-  .details .time {
-    font-family: 'Cinzel Decorative', serif;
-    font-weight: 700;
-    color: var(--primary);
-    font-size: 18px;
-    display: block;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-  }
-
-  .scratch-section {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-  }
-  .scratch-title {
-    font-size: 15px;
-    color: var(--primary);
-    margin-bottom: 15px;
-    font-style: italic;
-    font-weight: 600;
-  }
-
-  .scratch-wrapper {
-    position: relative;
-    width: 250px;
-    height: 180px;
-  }
-  .secret-date {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-size: 32px;
-    font-weight: 600;
-    color: var(--primary);
-    font-family: 'Playfair Display', serif;
-    line-height: 1.2;
-  }
-  .secret-date span {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 14px;
-    color: var(--gold-dark);
-    margin-bottom: 5px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
-  .hidden-reveal-container {
-    margin-top: 25px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 1.2s ease-in-out, max-height 1.2s ease-in-out, visibility 0s linear 1.2s;
-    width: 100%;
-  }
-  .hidden-reveal-container.revealed {
-    opacity: 1;
-    visibility: visible;
-    max-height: 1000px;
-    transition: opacity 1.2s ease-in-out, max-height 1.2s ease-in-out, visibility 0s;
-  }
-
-  .countdown-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 14px;
-    color: var(--gold-dark);
-    margin-bottom: 8px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  .countdown {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 30px;
-  }
-  .time-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(212, 175, 55, 0.15);
-    border: 1px solid var(--gold);
-    padding: 8px 12px;
-    border-radius: 6px;
-    min-width: 55px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  }
-  .time-box span {
-    font-size: 20px;
-    color: var(--primary);
-    font-weight: 700;
-    font-family: 'Playfair Display', serif;
-  }
-  .time-box p {
-    font-size: 10px;
-    color: var(--gold-dark);
-    text-transform: uppercase;
-    font-family: sans-serif;
-    letter-spacing: 1px;
-    margin-top: 2px;
-    font-weight: bold;
-  }
-
-  .scratch-wrapper-rect {
-    position: relative;
-    width: 280px;
-    height: 110px;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    border: 1px solid var(--gold);
-  }
-  .secret-translation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px;
-    font-size: 15px;
-    color: var(--primary);
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    line-height: 1.5;
-    background: rgba(253, 245, 230, 0.9);
-    text-align: center;
-  }
-
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    touch-action: none;
-    cursor: crosshair;
-  }
+.scratch-rect{position:relative;width:280px;height:110px;border-radius:6px;overflow:hidden;border:1px solid #D4AF37}
+.secret-trans{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:15px;font-size:15px;color:#062115;font-family:'Playfair Display',serif;font-style:italic;line-height:1.5;background:rgba(253,245,230,.9);text-align:center}
+canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
 </style>
 </head>
 <body>
 
-<div id="mobile-frame">
-  <div id="envelope-screen" onclick="this.style.display='none'">
-    <div class="envelope-wrapper">
-      <div class="envelope-body"></div>
-      <div class="envelope-flap" id="flap"></div>
+<div id="frame">
+  <div id="envelope" onclick="this.style.display='none'">
+    <div class="env-wrap">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
       <div class="seal">OPEN</div>
     </div>
   </div>
 
-  <div id="pages-container">
-    
-    <div class="page" id="page-1">
-      <div class="card-inner">
-        <div class="luxury-border"></div>
+  <div id="pages">
+    <div class="page" id="page1">
+      <div class="card">
+        <div class="border"></div>
         <div class="bismillah" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
         <div class="ayah" dir="rtl">يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا...</div>
-        
         <div class="divider"><span>✦</span></div>
         <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
-        <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
+        <div class="invite">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
         
-        <div class="quiz-section">
-          <div class="quiz-unlock-heading">
-            <span class="lock-icon">🔒</span> Answer to Unlock Invitation Details
-          </div>
+        <div class="quiz">
+          <div class="quiz-head">🔒 Answer to Unlock Invitation Details</div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
-          
-          <button type="button" class="quiz-btn" data-correct="false">Charity (Sadaqah)</button>
-          <button type="button" class="quiz-btn" data-correct="true">Marriage (Nikah)</button>
-          
-          <div id="quiz-feedback"></div>
-          <button type="button" class="continue-btn" id="continue-btn">Reveal Invitation Details →</button>
+          <button class="quiz-btn" data-correct="false" onclick="checkAnswer(this,false)">Charity (Sadaqah)</button>
+          <button class="quiz-btn" data-correct="true" onclick="checkAnswer(this,true)">Marriage (Nikah)</button>
+          <div id="feedback"></div>
+          <button id="continueBtn" onclick="goToPage2()">Reveal Invitation Details →</button>
         </div>
       </div>
     </div>
 
-    <div class="page" id="page-2">
-      <div class="card-inner">
-        <div class="luxury-border"></div>
+    <div class="page" id="page2">
+      <div class="card">
+        <div class="border"></div>
         <br>
-        <div class="couple" style="font-size: 50px;">The Details</div>
+        <div class="couple" style="font-size:50px">The Details</div>
         <div class="divider"><span>✦</span></div>
-        
         <div class="details">
           <span class="time">11:00 in the morning</span>
           Islam Pura, Nr Subjail Road
         </div>
-
         <div class="scratch-section">
           <div class="scratch-title">Scratch the heart to reveal the date</div>
-          <div class="scratch-wrapper" id="scratch-wrap">
+          <div class="scratch-wrap" id="scratchWrap">
             <div class="secret-date">
               <span>DATE OF DAWAT</span>
               17 November<br>2026
             </div>
-            <canvas id="scratch-pad"></canvas>
+            <canvas id="scratchPad"></canvas>
           </div>
-          
-          <div class="hidden-reveal-container" id="hidden-elements">
+          <div class="hidden" id="hiddenElements">
             <div class="countdown-title">Time Until Dawat</div>
             <div class="countdown">
-              <div class="time-box"><span id="cd-days">00</span><p>Days</p></div>
-              <div class="time-box"><span id="cd-hours">00</span><p>Hrs</p></div>
-              <div class="time-box"><span id="cd-mins">00</span><p>Mins</p></div>
+              <div class="time-box"><span id="cdDays">00</span><p>Days</p></div>
+              <div class="time-box"><span id="cdHours">00</span><p>Hrs</p></div>
+              <div class="time-box"><span id="cdMins">00</span><p>Mins</p></div>
             </div>
-
             <div class="scratch-title">Scratch for the Ayah Translation</div>
-            <div class="scratch-wrapper-rect">
-              <div class="secret-translation">
-                "O mankind, fear your Lord, who created you from one soul and created from it its mate..."
-              </div>
-              <canvas id="scratch-pad-rect"></canvas>
+            <div class="scratch-rect">
+              <div class="secret-trans">"O mankind, fear your Lord, who created you from one soul and created from it its mate..."</div>
+              <canvas id="scratchRect"></canvas>
             </div>
           </div>
         </div>
@@ -577,198 +135,167 @@
 </div>
 
 <script>
-  // Quiz logic
-  const quizButtons = document.querySelectorAll('.quiz-btn');
-  const feedback = document.getElementById('quiz-feedback');
-  const continueBtn = document.getElementById('continue-btn');
+function checkAnswer(btn, isCorrect) {
+  document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct','wrong'));
+  var feedback = document.getElementById('feedback');
+  var continueBtn = document.getElementById('continueBtn');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+    feedback.style.color = "#062115";
+    continueBtn.classList.add('show');
+  } else {
+    btn.classList.add('wrong');
+    feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+    feedback.style.color = "#c0392b";
+    continueBtn.classList.remove('show');
+  }
+}
 
-  quizButtons.forEach(btn => {
-    btn.addEventListener('click', function() {
-      const isCorrect = this.dataset.correct === 'true';
-      quizButtons.forEach(b => b.classList.remove('correct', 'wrong'));
-      if (isCorrect) {
-        this.classList.add('correct');
-        feedback.innerHTML = "Masha'Allah, that is correct! ✨";
-        feedback.style.color = "var(--primary)";
-        continueBtn.classList.add('show');
-      } else {
-        this.classList.add('wrong');
-        feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
-        feedback.style.color = "#c0392b";
-        continueBtn.classList.remove('show');
-      }
-    });
-  });
+function goToPage2() {
+  document.getElementById('page2').style.display = 'block';
+  document.getElementById('page1').style.display = 'none';
+  document.getElementById('pages').scrollTop = 0;
+}
 
-  continueBtn.addEventListener('click', function() {
-    document.getElementById('page-2').style.display = 'flex';
-    document.getElementById('page-1').style.display = 'none';
-    document.getElementById('pages-container').scrollTop = 0;
-  });
-
-  // Countdown
-  try {
-    const targetDate = new Date(2026, 10, 17, 11, 0, 0).getTime();
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-      if (distance > 0) {
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        document.getElementById("cd-days").innerText = days < 10 ? "0" + days : days;
-        document.getElementById("cd-hours").innerText = hours < 10 ? "0" + hours : hours;
-        document.getElementById("cd-mins").innerText = minutes < 10 ? "0" + minutes : minutes;
-      }
+// Countdown
+try {
+  var target = new Date(2026, 10, 17, 11, 0, 0).getTime();
+  function updateCountdown() {
+    var now = new Date().getTime();
+    var distance = target - now;
+    if (distance > 0) {
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById("cdDays").innerText = days < 10 ? "0" + days : days;
+      document.getElementById("cdHours").innerText = hours < 10 ? "0" + hours : hours;
+      document.getElementById("cdMins").innerText = mins < 10 ? "0" + mins : mins;
     }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  } catch (e) {}
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+} catch(e) {}
 
-  // Heart scratch - SMOOTH
-  try {
-    const canvasHeart = document.getElementById('scratch-pad');
-    const ctxHeart = canvasHeart.getContext('2d');
-    const wrapperHeart = document.getElementById('scratch-wrap');
-    const hiddenElements = document.getElementById('hidden-elements');
-    canvasHeart.width = 250;
-    canvasHeart.height = 180;
-
-    function drawHeartMask() {
-      ctxHeart.save();
-      let gradient = ctxHeart.createLinearGradient(0, 0, canvasHeart.width, canvasHeart.height);
-      gradient.addColorStop(0, '#E5C158');
-      gradient.addColorStop(0.3, '#FDF5E6');
-      gradient.addColorStop(0.5, '#D4AF37');
-      gradient.addColorStop(1, '#8A6511');
-      ctxHeart.fillStyle = gradient;
-      ctxHeart.beginPath();
-      ctxHeart.moveTo(125, 40);
-      ctxHeart.bezierCurveTo(125, 30, 110, 5, 75, 5);
-      ctxHeart.bezierCurveTo(20, 5, 20, 70, 20, 70);
-      ctxHeart.bezierCurveTo(20, 110, 75, 145, 125, 175);
-      ctxHeart.bezierCurveTo(175, 145, 230, 110, 230, 70);
-      ctxHeart.bezierCurveTo(230, 70, 230, 5, 175, 5);
-      ctxHeart.bezierCurveTo(140, 5, 125, 30, 125, 40);
-      ctxHeart.fill();
-      ctxHeart.lineWidth = 2;
-      ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
-      ctxHeart.stroke();
-      ctxHeart.restore();
-    }
-    drawHeartMask();
-
-    ctxHeart.globalCompositeOperation = 'destination-out';
-    ctxHeart.lineWidth = 42;
-    ctxHeart.lineCap = 'round';
-    ctxHeart.lineJoin = 'round';
-
-    let isDrawingHeart = false;
-    let scratchTracker = 0;
-    let isTimerRevealed = false;
-
-    function getPosHeart(e) {
-      const rect = canvasHeart.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-    function startDrawHeart(e) {
-      isDrawingHeart = true;
-      wrapperHeart.style.animation = 'none';
-      scratchHeart(e);
-    }
-    function endDrawHeart() {
-      isDrawingHeart = false;
-      ctxHeart.beginPath();
-    }
-    function scratchHeart(e) {
-      if (!isDrawingHeart) return;
-      if (e.cancelable) e.preventDefault();
-      const pos = getPosHeart(e);
-      ctxHeart.lineTo(pos.x, pos.y);
-      ctxHeart.stroke();
-      ctxHeart.beginPath();
-      ctxHeart.moveTo(pos.x, pos.y);
-      if (!isTimerRevealed) {
-        scratchTracker++;
-        if (scratchTracker > 35) {
-          hiddenElements.classList.add('revealed');
-          isTimerRevealed = true;
-        }
+// Heart Scratch
+try {
+  var canvas = document.getElementById('scratchPad');
+  var ctx = canvas.getContext('2d');
+  var hidden = document.getElementById('hiddenElements');
+  canvas.width = 250;
+  canvas.height = 180;
+  
+  ctx.save();
+  var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#E5C158');
+  gradient.addColorStop(0.3, '#FDF5E6');
+  gradient.addColorStop(0.5, '#D4AF37');
+  gradient.addColorStop(1, '#8A6511');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.moveTo(125, 40);
+  ctx.bezierCurveTo(125, 30, 110, 5, 75, 5);
+  ctx.bezierCurveTo(20, 5, 20, 70, 20, 70);
+  ctx.bezierCurveTo(20, 110, 75, 145, 125, 175);
+  ctx.bezierCurveTo(175, 145, 230, 110, 230, 70);
+  ctx.bezierCurveTo(230, 70, 230, 5, 175, 5);
+  ctx.bezierCurveTo(140, 5, 125, 30, 125, 40);
+  ctx.fill();
+  ctx.restore();
+  
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.lineWidth = 42;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  
+  var drawing = false;
+  var tracker = 0;
+  var revealed = false;
+  
+  function getPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var x = e.touches ? e.touches[0].clientX : e.clientX;
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    return {x: x - rect.left, y: y - rect.top};
+  }
+  function start(e) { drawing = true; scratch(e); }
+  function end() { drawing = false; ctx.beginPath(); }
+  function scratch(e) {
+    if (!drawing) return;
+    if (e.cancelable) e.preventDefault();
+    var pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    if (!revealed) {
+      tracker++;
+      if (tracker > 35) {
+        hidden.classList.add('revealed');
+        revealed = true;
       }
     }
+  }
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', scratch);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, {passive: false});
+  canvas.addEventListener('touchmove', scratch, {passive: false});
+  canvas.addEventListener('touchend', end);
+} catch(e) {}
 
-    canvasHeart.addEventListener('mousedown', startDrawHeart);
-    canvasHeart.addEventListener('mousemove', scratchHeart);
-    canvasHeart.addEventListener('mouseup', endDrawHeart);
-    canvasHeart.addEventListener('mouseleave', endDrawHeart);
-    canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
-    canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
-    canvasHeart.addEventListener('touchend', endDrawHeart);
-  } catch (e) {}
-
-  // Rectangle scratch - SMOOTH
-  try {
-    const canvasRect = document.getElementById('scratch-pad-rect');
-    const ctxRect = canvasRect.getContext('2d');
-    canvasRect.width = 280;
-    canvasRect.height = 110;
-
-    function drawRectMask() {
-      ctxRect.save();
-      let gradient = ctxRect.createLinearGradient(0, 0, canvasRect.width, canvasRect.height);
-      gradient.addColorStop(0, '#E5C158');
-      gradient.addColorStop(0.5, '#D4AF37');
-      gradient.addColorStop(1, '#8A6511');
-      ctxRect.fillStyle = gradient;
-      ctxRect.fillRect(0, 0, canvasRect.width, canvasRect.height);
-      ctxRect.fillStyle = "#062115";
-      ctxRect.font = "italic 18px 'Playfair Display'";
-      ctxRect.textAlign = "center";
-      ctxRect.fillText("Scratch Here", canvasRect.width / 2, canvasRect.height / 2 + 6);
-      ctxRect.restore();
-    }
-    drawRectMask();
-    ctxRect.globalCompositeOperation = 'destination-out';
-    ctxRect.lineWidth = 35;
-    ctxRect.lineCap = 'round';
-    ctxRect.lineJoin = 'round';
-    
-    let isDrawingRect = false;
-
-    function getPosRect(e) {
-      const rect = canvasRect.getBoundingClientRect();
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return { x: clientX - rect.left, y: clientY - rect.top };
-    }
-    function startDrawRect(e) {
-      isDrawingRect = true;
-      scratchRect(e);
-    }
-    function endDrawRect() {
-      isDrawingRect = false;
-      ctxRect.beginPath();
-    }
-    function scratchRect(e) {
-      if (!isDrawingRect) return;
-      if (e.cancelable) e.preventDefault();
-      const pos = getPosRect(e);
-      ctxRect.lineTo(pos.x, pos.y);
-      ctxRect.stroke();
-      ctxRect.beginPath();
-      ctxRect.moveTo(pos.x, pos.y);
-    }
-
-    canvasRect.addEventListener('mousedown', startDrawRect);
-    canvasRect.addEventListener('mousemove', scratchRect);
-    canvasRect.addEventListener('mouseup', endDrawRect);
-    canvasRect.addEventListener('mouseleave', endDrawRect);
-    canvasRect.addEventListener('touchstart', startDrawRect, { passive: false });
-    canvasRect.addEventListener('touchmove', scratchRect, { passive: false });
-    canvasRect.addEventListener('touchend', endDrawRect);
-  } catch (e) {}
+// Rectangle Scratch
+try {
+  var canvasR = document.getElementById('scratchRect');
+  var ctxR = canvasR.getContext('2d');
+  canvasR.width = 280;
+  canvasR.height = 110;
+  
+  ctxR.save();
+  var gradR = ctxR.createLinearGradient(0, 0, canvasR.width, canvasR.height);
+  gradR.addColorStop(0, '#E5C158');
+  gradR.addColorStop(0.5, '#D4AF37');
+  gradR.addColorStop(1, '#8A6511');
+  ctxR.fillStyle = gradR;
+  ctxR.fillRect(0, 0, canvasR.width, canvasR.height);
+  ctxR.fillStyle = "#062115";
+  ctxR.font = "italic 18px 'Playfair Display'";
+  ctxR.textAlign = "center";
+  ctxR.fillText("Scratch Here", canvasR.width / 2, canvasR.height / 2 + 6);
+  ctxR.restore();
+  
+  ctxR.globalCompositeOperation = 'destination-out';
+  ctxR.lineWidth = 35;
+  ctxR.lineCap = 'round';
+  ctxR.lineJoin = 'round';
+  
+  var drawingR = false;
+  function getPosR(e) {
+    var rect = canvasR.getBoundingClientRect();
+    var x = e.touches ? e.touches[0].clientX : e.clientX;
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    return {x: x - rect.left, y: y - rect.top};
+  }
+  function startR(e) { drawingR = true; scratchR(e); }
+  function endR() { drawingR = false; ctxR.beginPath(); }
+  function scratchR(e) {
+    if (!drawingR) return;
+    if (e.cancelable) e.preventDefault();
+    var pos = getPosR(e);
+    ctxR.lineTo(pos.x, pos.y);
+    ctxR.stroke();
+    ctxR.beginPath();
+    ctxR.moveTo(pos.x, pos.y);
+  }
+  canvasR.addEventListener('mousedown', startR);
+  canvasR.addEventListener('mousemove', scratchR);
+  canvasR.addEventListener('mouseup', endR);
+  canvasR.addEventListener('mouseleave', endR);
+  canvasR.addEventListener('touchstart', startR, {passive: false});
+  canvasR.addEventListener('touchmove', scratchR, {passive: false});
+  canvasR.addEventListener('touchend', endR);
+} catch(e) {}
 </script>
 
 </body>
