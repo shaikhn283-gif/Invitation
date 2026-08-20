@@ -367,11 +367,16 @@
     font-style: italic;
     font-weight: 600;
   }
+  .scratch-hint {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+  }
 
   .scratch-wrapper {
     position: relative;
     width: 250px;
-    height: 200px;
+    height: 180px; /* slightly reduced */
   }
   .secret-date {
     position: absolute;
@@ -396,13 +401,6 @@
     margin-bottom: 5px;
     font-weight: 700;
     letter-spacing: 1px;
-  }
-
-  .plain-date {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--primary);
   }
 
   .hidden-reveal-container {
@@ -552,14 +550,10 @@
           <span class="time">11:00 in the morning</span>
           Islam Pura, Nr Subjail Road
         </div>
-        
-        <div class="plain-date">
-          <span style="font-family:'Cinzel Decorative',serif; font-size:14px; color:#99731c; font-weight:700;">DATE OF DAWAT</span><br>
-          17 November 2026
-        </div>
 
         <div class="scratch-section">
-          <div class="scratch-title">Scratch the heart for a surprise</div>
+          <div class="scratch-title">Scratch the heart to reveal the date</div>
+          <div class="scratch-hint">(Scroll by swiping outside the scratch area)</div>
           <div class="scratch-wrapper" id="scratch-wrap">
             <div class="secret-date">
               <span>DATE OF DAWAT</span>
@@ -601,7 +595,6 @@
     btn.addEventListener('click', function() {
       const isCorrect = this.dataset.correct === 'true';
       
-      // Reset all buttons
       quizButtons.forEach(b => b.classList.remove('correct', 'wrong'));
       
       if (isCorrect) {
@@ -618,7 +611,6 @@
     });
   });
 
-  // Go to page 2
   continueBtn.addEventListener('click', function() {
     document.getElementById('page-2').style.display = 'flex';
     document.getElementById('page-1').style.display = 'none';
@@ -651,7 +643,7 @@
     const wrapperHeart = document.getElementById('scratch-wrap');
     const hiddenElements = document.getElementById('hidden-elements');
     canvasHeart.width = 250;
-    canvasHeart.height = 200;
+    canvasHeart.height = 180; // match CSS height
 
     function drawHeartMask() {
       ctxHeart.save();
@@ -662,13 +654,13 @@
       gradient.addColorStop(1, '#8A6511');
       ctxHeart.fillStyle = gradient;
       ctxHeart.beginPath();
-      ctxHeart.moveTo(125, 45);
-      ctxHeart.bezierCurveTo(125, 35, 110, 10, 75, 10);
-      ctxHeart.bezierCurveTo(20, 10, 20, 75, 20, 75);
-      ctxHeart.bezierCurveTo(20, 115, 75, 155, 125, 185);
-      ctxHeart.bezierCurveTo(175, 155, 230, 115, 230, 75);
-      ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
-      ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45);
+      ctxHeart.moveTo(125, 40);
+      ctxHeart.bezierCurveTo(125, 30, 110, 5, 75, 5);
+      ctxHeart.bezierCurveTo(20, 5, 20, 70, 20, 70);
+      ctxHeart.bezierCurveTo(20, 110, 75, 145, 125, 175);
+      ctxHeart.bezierCurveTo(175, 145, 230, 110, 230, 70);
+      ctxHeart.bezierCurveTo(230, 70, 230, 5, 175, 5);
+      ctxHeart.bezierCurveTo(140, 5, 125, 30, 125, 40);
       ctxHeart.fill();
       ctxHeart.lineWidth = 2;
       ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
