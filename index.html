@@ -47,7 +47,7 @@
     box-shadow: 0 0 40px rgba(0,0,0,0.8);
   }
 
-  /* Envelope – clickable anywhere */
+  /* Envelope – clickable anywhere (inline onclick) */
   #envelope-screen {
     position: absolute;
     top: 0;
@@ -149,7 +149,9 @@
     flex-direction: column;
   }
 
+  /* Page 2 is hidden initially, shown when targeted via CSS */
   #page-2 { display: none; }
+  #page-2:target { display: flex; }
 
   .card-inner {
     position: relative;
@@ -246,7 +248,7 @@
     z-index: 1;
   }
 
-  /* Quiz Section - with clear unlock instruction */
+  /* Quiz Section - CSS only */
   .quiz-section {
     margin-top: 30px;
     padding: 20px;
@@ -277,7 +279,12 @@
     margin-bottom: 15px;
     line-height: 1.5;
   }
-  .quiz-btn {
+
+  /* Hide radio inputs, style labels as buttons */
+  .quiz-option input[type="radio"] {
+    display: none;
+  }
+  .quiz-option label {
     display: block;
     width: 100%;
     padding: 12px;
@@ -293,28 +300,24 @@
     cursor: pointer;
     transition: all 0.3s;
     touch-action: manipulation;
+    text-align: center;
   }
-  .quiz-btn:active { transform: scale(0.98); }
-  .quiz-btn.correct {
+  .quiz-option label:active { transform: scale(0.98); }
+
+  /* Correct answer feedback */
+  #correct-answer:checked + label {
     background: var(--gold);
     color: #fff;
     border-color: var(--gold-dark);
   }
-  .quiz-btn.wrong {
+  #wrong-answer:checked + label {
     background: #e74c3c;
     color: #fff;
     border-color: #c0392b;
   }
 
-  #quiz-feedback {
-    font-size: 15px;
-    color: var(--primary);
-    margin-top: 10px;
-    font-weight: 600;
-    min-height: 22px;
-  }
-
-  .continue-btn {
+  /* Continue button appears when correct answer is selected */
+  .continue-link {
     display: none;
     margin: 20px auto 0;
     padding: 12px 30px;
@@ -328,9 +331,11 @@
     letter-spacing: 1px;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    touch-action: manipulation;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
   }
-  .continue-btn.show {
+  #correct-answer:checked ~ .continue-link {
     display: block;
   }
 
@@ -396,6 +401,14 @@
     margin-bottom: 5px;
     font-weight: 700;
     letter-spacing: 1px;
+  }
+
+  /* Date is also shown as plain text below scratch */
+  .plain-date {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
   }
 
   .hidden-reveal-container {
@@ -517,23 +530,24 @@
         <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
         <div class="divider"><span>✦</span></div>
         
-        <!-- The Gamified Quiz with clear instruction and inline fallback -->
+        <!-- CSS-only Quiz -->
         <div class="quiz-section">
           <div class="quiz-unlock-heading">
             <span class="lock-icon">🔒</span> Answer to Unlock Invitation Details
           </div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
           
-          <!-- Wrong answer -->
-          <button type="button" class="quiz-btn" 
-                  onclick="handleAnswer(this, false)">Charity (Sadaqah)</button>
+          <div class="quiz-option">
+            <input type="radio" id="wrong-answer" name="quiz">
+            <label for="wrong-answer">Charity (Sadaqah)</label>
+          </div>
           
-          <!-- Correct answer (inline fallback ensures continue button appears) -->
-          <button type="button" class="quiz-btn" 
-                  onclick="handleAnswer(this, true); document.getElementById('continue-btn').classList.add('show')">Marriage (Nikah)</button>
+          <div class="quiz-option">
+            <input type="radio" id="correct-answer" name="quiz">
+            <label for="correct-answer">Marriage (Nikah)</label>
+          </div>
           
-          <div id="quiz-feedback"></div>
-          <button type="button" class="continue-btn" id="continue-btn">Reveal Invitation Details →</button>
+          <a href="#page-2" class="continue-link">Reveal Invitation Details →</a>
         </div>
       </div>
     </div>
@@ -551,8 +565,14 @@
           Islam Pura, Nr Subjail Road
         </div>
         
+        <!-- Date shown in plain text (always visible) -->
+        <div class="plain-date">
+          <span style="font-family:'Cinzel Decorative',serif; font-size:14px; color:#99731c; font-weight:700;">DATE OF DAWAT</span><br>
+          17 November 2026
+        </div>
+
         <div class="scratch-section">
-          <div class="scratch-title">Please scratch the heart to reveal the date</div>
+          <div class="scratch-title">Scratch the heart for a surprise</div>
           <div class="scratch-wrapper" id="scratch-wrap">
             <div class="secret-date">
               <span>DATE OF DAWAT</span>
@@ -584,9 +604,9 @@
   </div>
 </div>
 
-<!-- Separate script for countdown, quiz, and scratch – safe from blocking envelope opening -->
+<!-- JavaScript for countdown and scratch (optional, degrades gracefully) -->
 <script>
-  // 1. Countdown
+  // Countdown (optional)
   try {
     const targetDate = new Date(2026, 10, 17, 11, 0, 0).getTime();
     function updateCountdown() {
@@ -604,49 +624,9 @@
     updateCountdown();
     setInterval(updateCountdown, 1000);
   } catch (e) {}
-</script>
 
-<script>
-  // 2. Quiz logic (handleAnswer is global for inline onclick)
-  function handleAnswer(btn, isCorrect) {
-    const feedback = document.getElementById('quiz-feedback');
-    const continueBtn = document.getElementById('continue-btn');
-    const allBtns = document.querySelectorAll('.quiz-btn');
-    allBtns.forEach(b => b.classList.remove('correct', 'wrong'));
-
-    if (isCorrect) {
-      btn.classList.add('correct');
-      feedback.innerHTML = "Masha'Allah, that is correct! ✨";
-      feedback.style.color = "var(--primary)";
-      continueBtn.classList.add('show');
-    } else {
-      btn.classList.add('wrong');
-      feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
-      feedback.style.color = "#c0392b";
-      continueBtn.classList.remove('show');
-    }
-  }
-
-  // Go to page two
-  function goToPageTwo() {
-    const page2 = document.getElementById('page-2');
-    const container = document.getElementById('pages-container');
-    page2.style.display = 'flex';
-    container.style.overflowY = 'auto';
-    try {
-      page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    } catch (e) {
-      page2.scrollIntoView();
-    }
-  }
-
-  document.getElementById('continue-btn').addEventListener('click', goToPageTwo);
-</script>
-
-<script>
-  // 3. Scratch canvases
+  // Heart scratch
   try {
-    // Heart scratch
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
     const wrapperHeart = document.getElementById('scratch-wrap');
@@ -662,7 +642,6 @@
       gradient.addColorStop(0.5, '#D4AF37');
       gradient.addColorStop(1, '#8A6511');
       ctxHeart.fillStyle = gradient;
-      
       ctxHeart.beginPath();
       ctxHeart.moveTo(125, 45);
       ctxHeart.bezierCurveTo(125, 35, 110, 10, 75, 10);
@@ -672,7 +651,6 @@
       ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
       ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45);
       ctxHeart.fill();
-      
       ctxHeart.lineWidth = 2;
       ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
       ctxHeart.stroke();
@@ -695,16 +673,8 @@
       const clientY = e.touches ? e.touches[0].clientY : e.clientY;
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
-
-    function startDrawHeart(e) {
-      isDrawingHeart = true;
-      wrapperHeart.style.animation = 'none';
-      scratchHeart(e);
-    }
-    function endDrawHeart() {
-      isDrawingHeart = false;
-      ctxHeart.beginPath();
-    }
+    function startDrawHeart(e) { isDrawingHeart = true; wrapperHeart.style.animation = 'none'; scratchHeart(e); }
+    function endDrawHeart() { isDrawingHeart = false; ctxHeart.beginPath(); }
     function scratchHeart(e) {
       if (!isDrawingHeart) return;
       if (e.cancelable) e.preventDefault();
@@ -718,17 +688,12 @@
         if (scratchTracker > 35) {
           hiddenElements.classList.add('revealed');
           setTimeout(() => {
-            try {
-              hiddenElements.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            } catch (e) {
-              hiddenElements.scrollIntoView();
-            }
+            try { hiddenElements.scrollIntoView({ behavior: 'smooth', block: 'end' }); } catch (e) { hiddenElements.scrollIntoView(); }
           }, 500);
           isTimerRevealed = true;
         }
       }
     }
-
     canvasHeart.addEventListener('mousedown', startDrawHeart);
     canvasHeart.addEventListener('mousemove', scratchHeart);
     canvasHeart.addEventListener('mouseup', endDrawHeart);
@@ -736,8 +701,10 @@
     canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
     canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
     canvasHeart.addEventListener('touchend', endDrawHeart);
+  } catch (e) {}
 
-    // Rectangle scratch
+  // Rectangle scratch
+  try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
     canvasRect.width = 280;
@@ -758,12 +725,10 @@
       ctxRect.restore();
     }
     drawRectMask();
-
     ctxRect.globalCompositeOperation = 'destination-out';
     ctxRect.lineWidth = 35;
     ctxRect.lineCap = 'round';
     ctxRect.lineJoin = 'round';
-
     let isDrawingRect = false;
     function getPosRect(e) {
       const rect = canvasRect.getBoundingClientRect();
@@ -782,7 +747,6 @@
       ctxRect.beginPath();
       ctxRect.moveTo(pos.x, pos.y);
     }
-
     canvasRect.addEventListener('mousedown', startDrawRect);
     canvasRect.addEventListener('mousemove', scratchRect);
     canvasRect.addEventListener('mouseup', endDrawRect);
@@ -790,9 +754,7 @@
     canvasRect.addEventListener('touchstart', startDrawRect, { passive: false });
     canvasRect.addEventListener('touchmove', scratchRect, { passive: false });
     canvasRect.addEventListener('touchend', endDrawRect);
-  } catch (e) {
-    // Scratch functionality failed, but invitation still works
-  }
+  } catch (e) {}
 </script>
 
 </body>
