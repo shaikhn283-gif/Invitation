@@ -10,11 +10,17 @@
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-#envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#062115,#0A3323);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer}
-.env-wrap{position:relative;width:340px;height:230px;pointer-events:none}
-.env-body{position:absolute;bottom:0;left:0;width:100%;height:100%;background:#04140d;border:1px solid #144f37}
-.env-flap{position:absolute;top:-50px;left:0;width:0;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:160px solid #072b1c;z-index:4}
-.seal{position:absolute;top:110px;left:50%;transform:translate(-50%,-50%);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#E5C158,#D4AF37,#8A6511);display:flex;justify-content:center;align-items:center;color:#fff;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;z-index:5;animation:pulse 2s infinite;pointer-events:none}
+#envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#062115,#0A3323);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;transition:transform 1s ease-in-out,opacity 0.5s ease-in-out}
+#envelope.open{transform:translateY(-100%);opacity:0}
+
+.env-wrap{position:relative;width:340px;height:230px}
+.env-body{position:absolute;bottom:0;left:0;width:100%;height:100%;background:#04140d;border:1px solid #144f37;box-shadow:0 15px 35px rgba(0,0,0,0.6)}
+.env-flap{position:absolute;top:-50px;left:0;width:0;height:0;border-left:170px solid transparent;border-right:170px solid transparent;border-top:160px solid #072b1c;transform-origin:top center;z-index:4;transition:transform 0.8s ease-in-out,opacity 0.3s ease-in-out}
+#envelope.open .env-flap{transform:rotateX(180deg);opacity:0}
+
+.seal{position:absolute;top:110px;left:50%;transform:translate(-50%,-50%);width:75px;height:75px;border-radius:50%;background:radial-gradient(circle,#E5C158,#D4AF37,#8A6511);display:flex;justify-content:center;align-items:center;color:#fff;font-family:'Cinzel Decorative',serif;font-size:14px;font-weight:700;z-index:5;animation:pulse 2s infinite;transition:opacity 0.3s ease-in-out,transform 0.3s ease-in-out}
+#envelope.open .seal{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
+.seal:after{content:'';position:absolute;width:63px;height:63px;border-radius:50%;border:1.5px dotted rgba(255,255,255,0.5)}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.7)}70%{box-shadow:0 0 0 15px rgba(212,175,55,0)}100%{box-shadow:0 0 0 0 rgba(212,175,55,0)}}
 
 #pages{position:absolute;top:0;left:0;width:100%;height:100%;background:#222;z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -65,7 +71,7 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
 <body>
 
 <div id="frame">
-  <div id="envelope" onclick="this.style.display='none'">
+  <div id="envelope" onclick="openEnvelope()">
     <div class="env-wrap">
       <div class="env-body"></div>
       <div class="env-flap"></div>
@@ -135,6 +141,14 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
 </div>
 
 <script>
+function openEnvelope() {
+  var envelope = document.getElementById('envelope');
+  envelope.classList.add('open');
+  setTimeout(function() {
+    envelope.style.display = 'none';
+  }, 1500);
+}
+
 function checkAnswer(btn, isCorrect) {
   document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct','wrong'));
   var feedback = document.getElementById('feedback');
