@@ -398,7 +398,7 @@
     letter-spacing: 1px;
   }
 
-  /* Smooth fade-in for hidden elements */
+  /* Smooth fade-in */
   .hidden-reveal-container {
     margin-top: 25px;
     display: flex;
@@ -491,7 +491,7 @@
     top: 0;
     left: 0;
     z-index: 2;
-    touch-action: pan-y; /* Allow vertical scrolling on canvas */
+    touch-action: none;
     cursor: crosshair;
   }
 </style>
@@ -636,7 +636,7 @@
     setInterval(updateCountdown, 1000);
   } catch (e) {}
 
-  // Heart scratch with scroll support
+  // Heart scratch - SMOOTH, no scroll interference
   try {
     const canvasHeart = document.getElementById('scratch-pad');
     const ctxHeart = canvasHeart.getContext('2d');
@@ -677,8 +677,6 @@
     let isDrawingHeart = false;
     let scratchTracker = 0;
     let isTimerRevealed = false;
-    let lastTouchY = 0;
-    let isScrolling = false;
 
     function getPosHeart(e) {
       const rect = canvasHeart.getBoundingClientRect();
@@ -689,10 +687,6 @@
 
     function startDrawHeart(e) {
       isDrawingHeart = true;
-      isScrolling = false;
-      if (e.touches) {
-        lastTouchY = e.touches[0].clientY;
-      }
       wrapperHeart.style.animation = 'none';
       scratchHeart(e);
     }
@@ -704,20 +698,6 @@
 
     function scratchHeart(e) {
       if (!isDrawingHeart) return;
-      
-      // Detect vertical scroll
-      if (e.touches && e.touches.length > 0) {
-        const currentY = e.touches[0].clientY;
-        const deltaY = Math.abs(currentY - lastTouchY);
-        if (deltaY > 10) {
-          isScrolling = true;
-          lastTouchY = currentY;
-          return; // Let the browser handle scrolling
-        }
-        lastTouchY = currentY;
-      }
-
-      if (isScrolling) return;
       if (e.cancelable) e.preventDefault();
 
       const pos = getPosHeart(e);
@@ -739,12 +719,12 @@
     canvasHeart.addEventListener('mousemove', scratchHeart);
     canvasHeart.addEventListener('mouseup', endDrawHeart);
     canvasHeart.addEventListener('mouseleave', endDrawHeart);
-    canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: true });
-    canvasHeart.addEventListener('touchmove', scratchHeart, { passive: true });
+    canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
+    canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
     canvasHeart.addEventListener('touchend', endDrawHeart);
   } catch (e) {}
 
-  // Rectangle scratch with scroll support
+  // Rectangle scratch - SMOOTH, no scroll interference
   try {
     const canvasRect = document.getElementById('scratch-pad-rect');
     const ctxRect = canvasRect.getContext('2d');
@@ -772,8 +752,6 @@
     ctxRect.lineJoin = 'round';
     
     let isDrawingRect = false;
-    let lastTouchY = 0;
-    let isScrolling = false;
 
     function getPosRect(e) {
       const rect = canvasRect.getBoundingClientRect();
@@ -784,10 +762,6 @@
 
     function startDrawRect(e) {
       isDrawingRect = true;
-      isScrolling = false;
-      if (e.touches) {
-        lastTouchY = e.touches[0].clientY;
-      }
       scratchRect(e);
     }
 
@@ -798,20 +772,6 @@
 
     function scratchRect(e) {
       if (!isDrawingRect) return;
-      
-      // Detect vertical scroll
-      if (e.touches && e.touches.length > 0) {
-        const currentY = e.touches[0].clientY;
-        const deltaY = Math.abs(currentY - lastTouchY);
-        if (deltaY > 10) {
-          isScrolling = true;
-          lastTouchY = currentY;
-          return;
-        }
-        lastTouchY = currentY;
-      }
-
-      if (isScrolling) return;
       if (e.cancelable) e.preventDefault();
 
       const pos = getPosRect(e);
@@ -825,8 +785,8 @@
     canvasRect.addEventListener('mousemove', scratchRect);
     canvasRect.addEventListener('mouseup', endDrawRect);
     canvasRect.addEventListener('mouseleave', endDrawRect);
-    canvasRect.addEventListener('touchstart', startDrawRect, { passive: true });
-    canvasRect.addEventListener('touchmove', scratchRect, { passive: true });
+    canvasRect.addEventListener('touchstart', startDrawRect, { passive: false });
+    canvasRect.addEventListener('touchmove', scratchRect, { passive: false });
     canvasRect.addEventListener('touchend', endDrawRect);
   } catch (e) {}
 </script>
