@@ -72,7 +72,7 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 .scratch-rect{position:relative;width:280px;height:110px;border-radius:6px;overflow:hidden;border:1px solid #D4AF37}
 .secret-trans{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:15px;font-size:15px;color:#062115;font-family:'Playfair Display',serif;font-style:italic;line-height:1.5;background:rgba(253,245,230,.9);text-align:center}
 
-/* Canvas now allows vertical panning */
+/* Canvas: allow vertical scroll to pass through */
 canvas{position:absolute;top:0;left:0;z-index:2;touch-action:pan-y;cursor:crosshair}
 
 .back-link{display:inline-block;margin-top:22px;padding:10px 24px;background:transparent;border:1px solid rgba(212,175,55,0.6);color:#99731c;font-family:'Playfair Display',serif;font-style:italic;font-size:13px;border-radius:24px;cursor:pointer;text-decoration:none;transition:all 0.25s ease}
@@ -99,7 +99,7 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:pan-y;cursor:crossh
         <div class="ayah" dir="rtl">يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا...</div>
         <div class="divider"><span>✦</span></div>
         <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
-        <div class="invite">request the honor of your presence<br>at their Dawat.</div>
+        <div class="invite">request the honor of your presence<br>at their Walima.</div>
         <div class="divider"><span>✦</span></div>
         <div class="quiz">
           <div class="quiz-head">🔒 Answer to Unlock Invitation Details</div>
@@ -218,7 +218,7 @@ try {
   setInterval(updateCountdown, 1000);
 } catch(e) {}
 
-// ============ SMART SCRATCH (allows vertical scroll) ============
+// ============ SMART SCRATCH — strongly favors scratching ============
 function setupScratch(canvasId, drawMaskFn) {
   var canvas = document.getElementById(canvasId);
   if (!canvas) return;
@@ -239,10 +239,13 @@ function setupScratch(canvasId, drawMaskFn) {
   ctx.lineJoin = 'round';
 
   var drawing = false;
-  var directionLocked = false;
   var isScratching = false;
-  var startX = 0;
-  var startY = 0;
+  var isScrolling = false;
+  var directionLocked = false;
+  var startClientX = 0;
+  var startClientY = 0;
+  var lastScrollY = 0;
+  var pagesContainer = document.getElementById('pages');
 
   var tracker = 0;
   var revealed = false;
@@ -259,16 +262,18 @@ function setupScratch(canvasId, drawMaskFn) {
     drawing = true;
     directionLocked = false;
     isScratching = false;
+    isScrolling = false;
     var p = getPos(e);
-    startX = p.clientX;
-    startY = p.clientY;
-    // Initialize stroke at start point for smoothness on desktop
+    startClientX = p.clientX;
+    startClientY = p.clientY;
+    lastScrollY = p.clientY;
+
+    // For mouse, always scratch immediately
     if (!e.touches) {
-      var pos = { x: p.x, y: p.y };
-      ctx.beginPath();
-      ctx.moveTo(pos.x, pos.y);
       isScratching = true;
       directionLocked = true;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
     }
   }
 
@@ -281,43 +286,58 @@ function setupScratch(canvasId, drawMaskFn) {
     if (!drawing) return;
 
     var p = getPos(e);
-    var clientX = p.clientX;
-    var clientY = p.clientY;
 
-    // For touch: determine direction on first meaningful move
+    // Direction detection on first meaningful move (touch only)
     if (!directionLocked && e.touches) {
-      var dx = Math.abs(clientX - startX);
-      var dy = Math.abs(clientY - startY);
-      if (dx + dy < 8) return; // wait for more movement
+      var dx = Math.abs(p.clientX - startClientX);
+      var dy = Math.abs(p.clientY - startClientY);
+      var totalMove = dx + dy;
+
+      // Wait until user has moved at least 12px in any direction
+      if (totalMove < 12) return;
+
       directionLocked = true;
-      if (dy > dx) {
-        // Vertical swipe → let browser scroll
-        isScratching = false;
-        drawing = false;
+
+      // Only scroll if VERY clearly vertical (2.5x more vertical than horizontal)
+      if (dy > dx * 2.5) {
+        isScrolling = true;
         return;
       } else {
-        // Horizontal → scratch
         isScratching = true;
-        // Reset stroke position so the line starts here
+        // Draw line from touch start to current point (fills initial gap)
+        var rect = canvas.getBoundingClientRect();
+        ctx.beginPath();
+        ctx.moveTo(startClientX - rect.left, startClientY - rect.top);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
       }
     }
 
-    if (!isScratching) return;
-    if (e.cancelable) e.preventDefault();
+    // Scroll mode: nudge page scroll by finger delta, prevent browser default
+    if (isScrolling) {
+      if (e.cancelable) e.preventDefault();
+      var deltaY = lastScrollY - p.clientY;
+      pagesContainer.scrollTop += deltaY;
+      lastScrollY = p.clientY;
+      return;
+    }
 
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
+    // Scratch mode
+    if (isScratching) {
+      if (e.cancelable) e.preventDefault();
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
 
-    // Reveal after enough scratching (only for heart)
-    if (canvasId === 'scratchPad' && !revealed && hidden) {
-      tracker++;
-      if (tracker > 35) {
-        hidden.classList.add('revealed');
-        revealed = true;
+      if (canvasId === 'scratchPad' && !revealed && hidden) {
+        tracker++;
+        if (tracker > 35) {
+          hidden.classList.add('revealed');
+          revealed = true;
+        }
       }
     }
   }
