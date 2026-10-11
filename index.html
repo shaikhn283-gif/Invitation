@@ -71,9 +71,10 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 
 .scratch-rect{position:relative;width:280px;height:110px;border-radius:6px;overflow:hidden;border:1px solid #D4AF37}
 .secret-trans{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:15px;font-size:15px;color:#062115;font-family:'Playfair Display',serif;font-style:italic;line-height:1.5;background:rgba(253,245,230,.9);text-align:center}
-canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none}
 
-/* Back button */
+/* Canvas now allows vertical panning */
+canvas{position:absolute;top:0;left:0;z-index:2;touch-action:pan-y;cursor:crosshair}
+
 .back-link{display:inline-block;margin-top:22px;padding:10px 24px;background:transparent;border:1px solid rgba(212,175,55,0.6);color:#99731c;font-family:'Playfair Display',serif;font-style:italic;font-size:13px;border-radius:24px;cursor:pointer;text-decoration:none;transition:all 0.25s ease}
 .back-link:active{background:rgba(212,175,55,0.15)}
 </style>
@@ -217,13 +218,121 @@ try {
   setInterval(updateCountdown, 1000);
 } catch(e) {}
 
-// Heart Scratch
-try {
-  var canvas = document.getElementById('scratchPad');
+// ============ SMART SCRATCH (allows vertical scroll) ============
+function setupScratch(canvasId, drawMaskFn) {
+  var canvas = document.getElementById(canvasId);
+  if (!canvas) return;
   var ctx = canvas.getContext('2d');
+  if (canvasId === 'scratchPad') {
+    canvas.width = 250;
+    canvas.height = 180;
+  } else {
+    canvas.width = 280;
+    canvas.height = 110;
+  }
+
+  drawMaskFn(ctx, canvas);
+
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.lineWidth = canvasId === 'scratchPad' ? 42 : 35;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  var drawing = false;
+  var directionLocked = false;
+  var isScratching = false;
+  var startX = 0;
+  var startY = 0;
+
+  var tracker = 0;
+  var revealed = false;
   var hidden = document.getElementById('hiddenElements');
-  canvas.width = 250;
-  canvas.height = 180;
+
+  function getPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top, clientX: clientX, clientY: clientY };
+  }
+
+  function start(e) {
+    drawing = true;
+    directionLocked = false;
+    isScratching = false;
+    var p = getPos(e);
+    startX = p.clientX;
+    startY = p.clientY;
+    // Initialize stroke at start point for smoothness on desktop
+    if (!e.touches) {
+      var pos = { x: p.x, y: p.y };
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      isScratching = true;
+      directionLocked = true;
+    }
+  }
+
+  function end() {
+    drawing = false;
+    ctx.beginPath();
+  }
+
+  function scratch(e) {
+    if (!drawing) return;
+
+    var p = getPos(e);
+    var clientX = p.clientX;
+    var clientY = p.clientY;
+
+    // For touch: determine direction on first meaningful move
+    if (!directionLocked && e.touches) {
+      var dx = Math.abs(clientX - startX);
+      var dy = Math.abs(clientY - startY);
+      if (dx + dy < 8) return; // wait for more movement
+      directionLocked = true;
+      if (dy > dx) {
+        // Vertical swipe → let browser scroll
+        isScratching = false;
+        drawing = false;
+        return;
+      } else {
+        // Horizontal → scratch
+        isScratching = true;
+        // Reset stroke position so the line starts here
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+      }
+    }
+
+    if (!isScratching) return;
+    if (e.cancelable) e.preventDefault();
+
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+
+    // Reveal after enough scratching (only for heart)
+    if (canvasId === 'scratchPad' && !revealed && hidden) {
+      tracker++;
+      if (tracker > 35) {
+        hidden.classList.add('revealed');
+        revealed = true;
+      }
+    }
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', scratch);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, { passive: true });
+  canvas.addEventListener('touchmove', scratch, { passive: false });
+  canvas.addEventListener('touchend', end);
+}
+
+// Heart mask drawer
+function drawHeartMask(ctx, canvas) {
   ctx.save();
   var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, '#E5C158');
@@ -241,94 +350,26 @@ try {
   ctx.bezierCurveTo(140, 5, 125, 30, 125, 40);
   ctx.fill();
   ctx.restore();
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.lineWidth = 42;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  var drawing = false;
-  var tracker = 0;
-  var revealed = false;
-  function getPos(e) {
-    var rect = canvas.getBoundingClientRect();
-    var x = e.touches ? e.touches[0].clientX : e.clientX;
-    var y = e.touches ? e.touches[0].clientY : e.clientY;
-    return {x: x - rect.left, y: y - rect.top};
-  }
-  function start(e) { drawing = true; scratch(e); }
-  function end() { drawing = false; ctx.beginPath(); }
-  function scratch(e) {
-    if (!drawing) return;
-    if (e.cancelable) e.preventDefault();
-    var pos = getPos(e);
-    ctx.lineTo(pos.x, pos.y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-    if (!revealed) {
-      tracker++;
-      if (tracker > 35) {
-        hidden.classList.add('revealed');
-        revealed = true;
-      }
-    }
-  }
-  canvas.addEventListener('mousedown', start);
-  canvas.addEventListener('mousemove', scratch);
-  canvas.addEventListener('mouseup', end);
-  canvas.addEventListener('mouseleave', end);
-  canvas.addEventListener('touchstart', start, {passive: false});
-  canvas.addEventListener('touchmove', scratch, {passive: false});
-  canvas.addEventListener('touchend', end);
-} catch(e) {}
+}
 
-// Rectangle Scratch
-try {
-  var canvasR = document.getElementById('scratchRect');
-  var ctxR = canvasR.getContext('2d');
-  canvasR.width = 280;
-  canvasR.height = 110;
-  ctxR.save();
-  var gradR = ctxR.createLinearGradient(0, 0, canvasR.width, canvasR.height);
-  gradR.addColorStop(0, '#E5C158');
-  gradR.addColorStop(0.5, '#D4AF37');
-  gradR.addColorStop(1, '#8A6511');
-  ctxR.fillStyle = gradR;
-  ctxR.fillRect(0, 0, canvasR.width, canvasR.height);
-  ctxR.fillStyle = "#062115";
-  ctxR.font = "italic 18px 'Playfair Display'";
-  ctxR.textAlign = "center";
-  ctxR.fillText("Scratch Here", canvasR.width / 2, canvasR.height / 2 + 6);
-  ctxR.restore();
-  ctxR.globalCompositeOperation = 'destination-out';
-  ctxR.lineWidth = 35;
-  ctxR.lineCap = 'round';
-  ctxR.lineJoin = 'round';
-  var drawingR = false;
-  function getPosR(e) {
-    var rect = canvasR.getBoundingClientRect();
-    var x = e.touches ? e.touches[0].clientX : e.clientX;
-    var y = e.touches ? e.touches[0].clientY : e.clientY;
-    return {x: x - rect.left, y: y - rect.top};
-  }
-  function startR(e) { drawingR = true; scratchR(e); }
-  function endR() { drawingR = false; ctxR.beginPath(); }
-  function scratchR(e) {
-    if (!drawingR) return;
-    if (e.cancelable) e.preventDefault();
-    var pos = getPosR(e);
-    ctxR.lineTo(pos.x, pos.y);
-    ctxR.stroke();
-    ctxR.beginPath();
-    ctxR.moveTo(pos.x, pos.y);
-  }
-  canvasR.addEventListener('mousedown', startR);
-  canvasR.addEventListener('mousemove', scratchR);
-  canvasR.addEventListener('mouseup', endR);
-  canvasR.addEventListener('mouseleave', endR);
-  canvasR.addEventListener('touchstart', startR, {passive: false});
-  canvasR.addEventListener('touchmove', scratchR, {passive: false});
-  canvasR.addEventListener('touchend', endR);
-} catch(e) {}
+// Rect mask drawer
+function drawRectMask(ctx, canvas) {
+  ctx.save();
+  var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#E5C158');
+  gradient.addColorStop(0.5, '#D4AF37');
+  gradient.addColorStop(1, '#8A6511');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#062115";
+  ctx.font = "italic 18px 'Playfair Display'";
+  ctx.textAlign = "center";
+  ctx.fillText("Scratch Here", canvas.width / 2, canvas.height / 2 + 6);
+  ctx.restore();
+}
+
+try { setupScratch('scratchPad', drawHeartMask); } catch(e) {}
+try { setupScratch('scratchRect', drawRectMask); } catch(e) {}
 </script>
 
 </body>
