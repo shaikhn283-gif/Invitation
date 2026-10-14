@@ -2,433 +2,841 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Invitation | Nawaz & Turfa</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --primary: #062115;
-    --primary-light: #0A3323;
-    --gold: #D4AF37;
-    --gold-dark: #99731c;
-    --gold-light: #FDF5E6;
-    --ivory: #FDFBF7;
-    --text-dark: #1a1a1a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  
-  body {
-    font-family: 'Playfair Display', serif;
-    background-color: #111;
-    display: flex; justify-content: center; align-items: center;
-    height: 100vh; height: 100dvh; 
-    overflow: hidden;
-    -webkit-user-select: none; 
-    user-select: none;
-    -webkit-touch-callout: none; 
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  #mobile-frame {
-    width: 100%; max-width: 414px; 
-    height: 100vh; height: 100dvh; 
-    position: relative;
-    background-color: #000; overflow: hidden;
-    box-shadow: 0 0 40px rgba(0,0,0,0.8);
-  }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-  #envelope-screen {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    z-index: 50; transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), opacity 1.2s ease-in-out;
-  }
-  
-  .envelope-wrapper { position: relative; width: 340px; height: 230px; }
-  .envelope-body {
-    position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
-    background: #04140d; border: 1px solid #144f37; box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-  }
-  .envelope-flap {
-    position: absolute; top: -50px; left: 0; width: 0; height: 0;
-    border-left: 170px solid transparent; border-right: 170px solid transparent;
-    border-top: 160px solid #072b1c; transition: transform 0.8s ease, opacity 0.5s ease;
-    transform-origin: top center; z-index: 4; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
-  }
-  
-  .seal {
-    position: absolute; top: 110px; left: 50%; transform: translate(-50%, -50%);
-    width: 75px; height: 75px; border-radius: 50%;
-    background: radial-gradient(circle, #E5C158 0%, #D4AF37 40%, #8A6511 100%);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.6);
-    display: flex; justify-content: center; align-items: center;
-    color: #fff; font-family: 'Cinzel Decorative', serif; font-size: 14px; font-weight: 700;
-    z-index: 5; text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
-    animation: pulseSeal 2s infinite;
-    border: none; outline: none; appearance: none; -webkit-appearance: none;
-  }
-  .seal::after {
-    content: ''; position: absolute; width: 63px; height: 63px; border-radius: 50%;
-    border: 1.5px dotted rgba(255,255,255,0.5);
-  }
-  @keyframes pulseSeal {
-    0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
-    70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
-  }
+/* ========== ENVELOPE OPENING SCREEN ========== */
+#envelope{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  background:radial-gradient(circle at 50% 50%, #0A3323 0%, #062115 60%, #02100a 100%);
+  display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  transition:opacity 1s ease 2.6s;overflow:hidden;
+}
+#envelope.hide{opacity:0;pointer-events:none}
 
-  #pages-container {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: #222; z-index: 1; display: flex; flex-direction: column;
-    overflow-y: hidden; -webkit-overflow-scrolling: touch; scroll-behavior: smooth;
-  }
-  
-  .page {
-    min-height: 100%; width: 100%; 
-    padding: 15px; display: flex; flex-direction: column;
-    padding-bottom: 100px; /* Added massive padding to dodge ads */
-  }
-  
-  #page-2 { display: none; opacity: 0; transition: opacity 1s ease-in; }
+/* Massive pulsing gold halo */
+#envelope:before{
+  content:'';position:absolute;top:50%;left:50%;
+  width:520px;height:520px;transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(212,175,55,0.55) 0%,rgba(212,175,55,0.22) 30%,rgba(212,175,55,0.06) 55%,transparent 75%);
+  border-radius:50%;pointer-events:none;
+  animation:haloPulse 3s ease-in-out infinite;
+}
+@keyframes haloPulse{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.7}
+  50%{transform:translate(-50%,-50%) scale(1.25);opacity:1}
+}
 
-  .card-inner {
-    position: relative; flex-grow: 1;
-    background: radial-gradient(circle at center, #ffffff 0%, #fdf5e6 60%, #e8d5a5 100%);
-    border-radius: 8px; 
-    padding: 35px 20px 100px 20px; /* Extra padding inside the card */
-    margin-bottom: 60px; /* Pushes the whole card up from the bottom edge */
-    box-shadow: inset 0 0 30px rgba(212, 175, 55, 0.2), 0 10px 20px rgba(0,0,0,0.5);
-    text-align: center;
-  }
+/* Rotating dashed ring */
+#envelope:after{
+  content:'';position:absolute;top:50%;left:50%;
+  width:440px;height:440px;transform:translate(-50%,-50%);
+  border:2px dashed rgba(212,175,55,0.35);border-radius:50%;
+  pointer-events:none;animation:ringRotate 25s linear infinite;
+}
+@keyframes ringRotate{
+  0%{transform:translate(-50%,-50%) rotate(0deg)}
+  100%{transform:translate(-50%,-50%) rotate(360deg)}
+}
 
-  .luxury-border {
-    position: absolute; top: 15px; bottom: 15px; left: 15px; right: 15px;
-    border: 1px solid var(--gold); pointer-events: none; z-index: 0;
-  }
-  .luxury-border::before, .luxury-border::after {
-    content: ''; position: absolute; width: calc(100% - 10px); height: calc(100% - 10px);
-    border: 1px solid rgba(212, 175, 55, 0.4); top: 4px; left: 4px;
-  }
+/* Falling gold dust */
+.dust{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.dust-particle{
+  position:absolute;top:-20px;width:6px;height:6px;border-radius:50%;
+  background:radial-gradient(circle,#FFF6D5 0%,#D4AF37 50%,#8A6511 100%);
+  box-shadow:0 0 8px rgba(212,175,55,0.9),0 0 14px rgba(255,241,168,0.6);
+  opacity:0;animation:dustFall linear infinite;
+}
+@keyframes dustFall{
+  0%{transform:translateY(-10vh) translateX(0);opacity:0}
+  10%{opacity:1}
+  50%{transform:translateY(50vh) translateX(15px);opacity:0.85}
+  90%{opacity:0.5}
+  100%{transform:translateY(115vh) translateX(-15px);opacity:0}
+}
 
-  .divider { display: flex; align-items: center; justify-content: center; margin: 20px 0; position: relative; z-index: 1; }
-  .divider::before, .divider::after { content: ''; height: 1px; width: 30%; background: linear-gradient(to right, transparent, var(--gold), transparent); }
-  .divider span { color: var(--gold); font-size: 14px; margin: 0 15px; }
+/* Gold star sparkles */
+.sparkles-envelope{position:absolute;inset:0;pointer-events:none;z-index:2}
+.sparkle-gold{
+  position:absolute;width:10px;height:10px;opacity:0;
+  animation:twinkle 2.2s ease-in-out infinite;
+}
+.sparkle-gold:before,.sparkle-gold:after{
+  content:'';position:absolute;top:50%;left:50%;
+  background:linear-gradient(to right,transparent 0%,#FFF6D5 50%,transparent 100%);
+  transform:translate(-50%,-50%);border-radius:50%;
+  filter:drop-shadow(0 0 6px rgba(255,241,168,1));
+}
+.sparkle-gold:before{width:30px;height:2px}
+.sparkle-gold:after{width:2px;height:30px}
+@keyframes twinkle{
+  0%,100%{opacity:0;transform:scale(0.3) rotate(0deg)}
+  50%{opacity:1;transform:scale(1.2) rotate(45deg)}
+}
 
-  .bismillah { font-family: 'Amiri', serif; font-size: 24px; color: var(--primary); margin-bottom: 10px; margin-top: 10px; position: relative; z-index: 1; }
-  .ayah { font-family: 'Amiri', serif; font-size: 22px; color: var(--gold-dark); line-height: 1.8; margin-bottom: 10px; text-shadow: 0 0 1px rgba(212, 175, 55, 0.5); position: relative; z-index: 1; }
-  
-  .couple { font-family: 'Great Vibes', cursive; font-size: 65px; color: var(--primary); margin: 5px 0; line-height: 1.1; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); position: relative; z-index: 1; }
-  .couple .heart { font-size: 30px; color: #a93226; font-family: sans-serif; display: inline-block; margin: 0 12px; }
-  
-  .invitation-text { font-size: 17px; color: var(--text-dark); font-style: italic; line-height: 1.6; position: relative; z-index: 1; }
-  
-  .quiz-section { margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.7); border: 1px solid var(--gold); border-radius: 8px; position: relative; z-index: 10; margin-bottom: 20px; }
-  .quiz-q { font-size: 16px; color: var(--primary); font-weight: 600; margin-bottom: 15px; line-height: 1.5; }
-  .quiz-btn {
-    display: block; width: 100%; padding: 12px; margin-bottom: 10px;
-    background: transparent; border: 1px solid var(--gold); color: var(--primary);
-    font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; font-style: italic;
-    border-radius: 4px; cursor: pointer; transition: all 0.3s;
-  }
-  .quiz-btn:active { transform: scale(0.98); }
-  .quiz-btn.correct { background: var(--gold); color: #fff; border-color: var(--gold-dark); }
-  .quiz-btn.wrong { background: #e74c3c; color: #fff; border-color: #c0392b; }
-  
-  #quiz-feedback { font-size: 15px; color: var(--primary); margin-top: 10px; font-weight: 600; min-height: 22px; }
-  
-  .continue-btn {
-    display: none; margin: 20px auto 0; padding: 12px 30px;
-    background: var(--primary); color: var(--gold-light);
-    border: none; border-radius: 25px; font-family: 'Cinzel Decorative', serif;
-    font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); animation: fadeIn 0.5s ease-in;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* ========== THE NEW PREMIUM ENVELOPE ========== */
+.envelope-wrap{
+  position:relative;
+  width:340px;
+  height:230px;
+  perspective:1200px;
+  z-index:3;
+  pointer-events:none;
+}
 
-  .details { font-size: 17px; color: var(--text-dark); line-height: 1.8; margin: 20px 0; position: relative; z-index: 1; }
-  .details .time { font-family: 'Cinzel Decorative', serif; font-weight: 700; color: var(--primary); font-size: 18px; display: block; margin-bottom: 8px; letter-spacing: 1px; }
-  
-  .scratch-section { margin-top: 20px; display: flex; flex-direction: column; align-items: center; position: relative; z-index: 10; }
-  .scratch-title { font-size: 15px; color: var(--primary); margin-bottom: 15px; font-style: italic; font-weight: 600; }
-  
-  .scratch-wrapper { position: relative; width: 250px; height: 200px; animation: pulseHeart 3s infinite ease-in-out; }
-  @keyframes pulseHeart { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+/* Gold inner lining — peeks out from behind flap */
+.env-lining{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(160deg,#F5E0B0 0%,#D4AF37 30%,#8A6511 70%,#5A3811 100%);
+  border-radius:4px;
+  z-index:1;
+  box-shadow:0 0 20px rgba(212,175,55,0.4);
+}
 
-  .secret-date {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    font-size: 32px; font-weight: 600; color: var(--primary); font-family: 'Playfair Display', serif; line-height: 1.2;
-  }
-  .secret-date span { font-family: 'Cinzel Decorative', serif; font-size: 14px; color: var(--gold-dark); margin-bottom: 5px; font-weight: 700; letter-spacing: 1px; }
-  
-  .hidden-reveal-container {
-    margin-top: 25px;
-    display: flex; flex-direction: column; align-items: center;
-    opacity: 0; 
-    visibility: hidden;
-    transition: opacity 1.5s ease-in;
-    width: 100%;
-  }
-  .hidden-reveal-container.revealed {
-    opacity: 1;
-    visibility: visible;
-  }
-  
-  .countdown-title {
-    font-family: 'Cinzel Decorative', serif;
-    font-size: 14px; color: var(--gold-dark); margin-bottom: 8px; font-weight: 700; letter-spacing: 1px;
-  }
-  .countdown { display: flex; gap: 12px; margin-bottom: 30px; }
-  .time-box {
-    display: flex; flex-direction: column; align-items: center;
-    background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold);
-    padding: 8px 12px; border-radius: 6px; min-width: 55px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  }
-  .time-box span { font-size: 20px; color: var(--primary); font-weight: 700; font-family: 'Playfair Display', serif; }
-  .time-box p { font-size: 10px; color: var(--gold-dark); text-transform: uppercase; font-family: sans-serif; letter-spacing: 1px; margin-top: 2px; font-weight: bold; }
-  
-  .scratch-wrapper-rect { 
-    position: relative; width: 280px; height: 110px; 
-    border-radius: 6px; overflow: hidden; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 1px solid var(--gold); 
-  }
-  .secret-translation {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    padding: 15px; font-size: 15px; color: var(--primary); 
-    font-family: 'Playfair Display', serif; font-style: italic; line-height: 1.5; 
-    background: rgba(253, 245, 230, 0.9); text-align: center;
-  }
-  
-  canvas { position: absolute; top: 0; left: 0; z-index: 2; touch-action: none; cursor: crosshair; }
+/* Envelope body — deep emerald with gold trim */
+.env-body{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.1) 0%, transparent 40%),
+    linear-gradient(160deg,#0d3b28 0%,#0A3323 40%,#04140d 100%);
+  border:1.5px solid rgba(212,175,55,0.55);
+  border-radius:4px;
+  z-index:2;
+  box-shadow:
+    0 30px 60px rgba(0,0,0,0.85),
+    0 12px 24px rgba(0,0,0,0.6),
+    0 4px 10px rgba(0,0,0,0.4),
+    inset 0 1px 3px rgba(212,175,55,0.3),
+    inset 0 -12px 30px rgba(0,0,0,0.55);
+  overflow:hidden;
+}
+
+/* Diagonal crease lines on body — classic envelope look */
+.env-body:before{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(128deg, transparent calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(232deg, transparent calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+  pointer-events:none;
+}
+
+/* Gold corner ornaments */
+.corner-orn{
+  position:absolute;width:38px;height:38px;pointer-events:none;
+}
+.corner-orn:before,.corner-orn:after{
+  content:'';position:absolute;
+  background:linear-gradient(90deg,#D4AF37,#F5E0B0,#D4AF37);
+  box-shadow:0 0 4px rgba(212,175,55,0.7);
+}
+.corner-orn:before{width:100%;height:1.5px}
+.corner-orn:after{width:1.5px;height:100%}
+.corner-orn.tl{top:14px;left:14px}
+.corner-orn.tl:before{top:0;left:0}
+.corner-orn.tl:after{top:0;left:0}
+.corner-orn.tr{top:14px;right:14px}
+.corner-orn.tr:before{top:0;right:0}
+.corner-orn.tr:after{top:0;right:0}
+.corner-orn.bl{bottom:14px;left:14px}
+.corner-orn.bl:before{bottom:0;left:0}
+.corner-orn.bl:after{bottom:0;left:0}
+.corner-orn.br{bottom:14px;right:14px}
+.corner-orn.br:before{bottom:0;right:0}
+.corner-orn.br:after{bottom:0;right:0}
+
+/* Letter inside — cream with monogram */
+.env-letter{
+  position:absolute;
+  left:50%;
+  bottom:22px;
+  transform:translateX(-50%) translateY(0);
+  width:290px;
+  height:170px;
+  background:linear-gradient(135deg,#FFFCF9 0%,#FDF5E6 60%,#F5E8C8 100%);
+  border-radius:3px;
+  z-index:3;
+  transition:transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 1.4s;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.4),
+    0 2px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border:1px solid rgba(212,175,55,0.35);
+}
+.letter-inner{
+  font-family:'Cinzel Decorative',serif;
+  font-size:26px;
+  font-weight:700;
+  color:#8A6511;
+  letter-spacing:6px;
+  text-shadow:0 1px 0 rgba(255,255,255,0.8);
+}
+#envelope.hide .env-letter{transform:translateX(-50%) translateY(-140px)}
+
+/* Envelope flap — V shape pointing down */
+.env-flap{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:55%;
+  background:linear-gradient(180deg,#0F4530 0%,#0d3b28 40%,#0A3323 70%,#072b1c 100%);
+  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  transform-origin:top center;
+  z-index:4;
+  transition:transform 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.4s, opacity 0.9s ease 1.5s;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,0.55)) drop-shadow(0 0 4px rgba(212,175,55,0.5));
+}
+/* Subtle gold sheen on the flap */
+.env-flap:before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.12) 0%, transparent 50%),
+    linear-gradient(135deg, transparent 45%, rgba(212,175,55,0.15) 50%, transparent 55%);
+  pointer-events:none;
+}
+#envelope.hide .env-flap{transform:rotateX(-180deg);opacity:0}
+
+/* Premium organic wax seal */
+.wax-seal{
+  position:absolute;
+  top:55%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:92px;
+  height:92px;
+  background:
+    radial-gradient(circle at 35% 28%, #FFF2C9 0%, #F5E0B0 15%, #D4AF37 45%, #8A6511 80%, #5A3811 100%);
+  border-radius:47% 53% 51% 49% / 52% 48% 52% 48%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#4A2C0A;
+  font-family:'Cinzel Decorative',serif;
+  font-size:18px;
+  font-weight:700;
+  letter-spacing:1px;
+  z-index:10;
+  text-shadow:0 1px 0 rgba(255,255,255,0.7);
+  transition:opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+  animation:waxSealPulse 2s ease-in-out infinite;
+  filter:drop-shadow(0 15px 30px rgba(0,0,0,0.7)) drop-shadow(0 5px 12px rgba(212,175,55,0.5));
+}
+.wax-seal:before{
+  content:'';
+  position:absolute;
+  width:74px;
+  height:74px;
+  border-radius:50%;
+  border:1.5px dotted rgba(74,44,10,0.5);
+}
+.wax-seal:after{
+  content:'';
+  position:absolute;
+  top:14px;
+  left:20px;
+  width:26px;
+  height:14px;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,255,255,0.95),transparent 70%);
+  filter:blur(1.5px);
+}
+#envelope.hide .wax-seal{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-20deg)}
+@keyframes waxSealPulse{
+  0%,100%{box-shadow:0 15px 30px rgba(0,0,0,0.7),0 5px 12px rgba(212,175,55,0.5),inset 0 4px 8px rgba(255,255,255,0.85),inset 0 -6px 12px rgba(80,50,20,0.5),0 0 0 0 rgba(212,175,55,0.8)}
+  50%{box-shadow:0 15px 30px rgba(0,0,0,0.7),0 5px 12px rgba(212,175,55,0.5),inset 0 4px 8px rgba(255,255,255,0.85),inset 0 -6px 12px rgba(80,50,20,0.5),0 0 0 22px rgba(212,175,55,0)}
+}
+
+/* Floating gold hearts */
+.heart-float{
+  position:absolute;bottom:60px;font-size:26px;opacity:0;
+  pointer-events:none;z-index:4;color:#D4AF37;
+  filter:drop-shadow(0 3px 8px rgba(212,175,55,0.8));
+  text-shadow:0 0 10px rgba(255,241,168,0.9);
+}
+#envelope.hide .heart-float{animation:heartFloat 2.4s ease-out 1.7s forwards}
+.heart-float:nth-child(1){left:25%}
+.heart-float:nth-child(2){left:40%;animation-delay:1.9s}
+.heart-float:nth-child(3){left:55%;animation-delay:1.8s}
+.heart-float:nth-child(4){left:68%;animation-delay:2.1s}
+.heart-float:nth-child(5){left:33%;animation-delay:2.3s}
+.heart-float:nth-child(6){left:60%;animation-delay:2.2s}
+@keyframes heartFloat{
+  0%{opacity:0;transform:translateY(0) scale(0.4) rotate(0deg)}
+  25%{opacity:1}
+  100%{opacity:0;transform:translateY(-280px) scale(1.4) rotate(180deg)}
+}
+
+/* ========== MAIN CONTENT ========== */
+#pages{position:absolute;top:0;left:0;width:100%;height:100%;background:#1a0f0a;z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.page{min-height:100%;width:100%;padding:15px}
+#page2{display:none}
+
+.card{
+  position:relative;
+  background:
+    radial-gradient(circle at 30% 15%, rgba(255,255,255,0.9) 0%, transparent 55%),
+    radial-gradient(circle,#fff,#fdf5e6,#e8d5a5);
+  border-radius:16px;
+  padding:35px 20px 60px;
+  text-align:center;
+  min-height:100%;
+  box-shadow:
+    0 30px 70px rgba(0,0,0,0.5),
+    0 12px 30px rgba(0,0,0,0.3),
+    0 4px 10px rgba(0,0,0,0.2),
+    inset 0 2px 0 rgba(255,255,255,1);
+  animation:cardEntry 1.4s cubic-bezier(0.4,0,0.2,1) 2.4s both;
+}
+@keyframes cardEntry{
+  0%{opacity:0;transform:translateY(80px) scale(0.9)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+
+.card:before{
+  content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
+  background-image:
+    radial-gradient(circle at 15% 25%, rgba(212,175,55,0.05) 0, transparent 1.5px),
+    radial-gradient(circle at 85% 60%, rgba(153,115,28,0.06) 0, transparent 1.5px),
+    radial-gradient(circle at 45% 85%, rgba(212,175,55,0.03) 0, transparent 1.5px);
+  background-size:24px 24px,32px 32px,20px 20px;
+}
+
+.border{
+  position:absolute;top:14px;bottom:14px;left:14px;right:14px;
+  border-radius:12px;pointer-events:none;padding:2px;
+  background:linear-gradient(120deg,#8A6511 0%,#FFF2C9 15%,#F5E0B0 25%,#D4AF37 40%,#8A6511 55%,#D4AF37 70%,#FFF2C9 85%,#8A6511 100%);
+  background-size:300% 300%;
+  animation:borderShimmer 5s ease-in-out infinite;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+  filter:drop-shadow(0 0 5px rgba(212,175,55,0.7));
+}
+@keyframes borderShimmer{
+  0%,100%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+}
+.border:before{content:'';position:absolute;inset:8px;border:1px solid rgba(212,175,55,0.4);border-radius:6px}
+
+.corner{position:absolute;width:36px;height:36px;pointer-events:none;opacity:0.85}
+.corner:before,.corner:after{content:'';position:absolute;background:linear-gradient(90deg,#8A6511,#F5E0B0,#8A6511)}
+.corner:before{width:100%;height:2px;box-shadow:0 0 4px rgba(212,175,55,0.6)}
+.corner:after{width:2px;height:100%;box-shadow:0 0 4px rgba(212,175,55,0.6)}
+.corner.tl{top:20px;left:20px}
+.corner.tl:before{top:0;left:0}
+.corner.tl:after{top:0;left:0}
+.corner.tr{top:20px;right:20px}
+.corner.tr:before{top:0;right:0}
+.corner.tr:after{top:0;right:0}
+.corner.bl{bottom:20px;left:20px}
+.corner.bl:before{bottom:0;left:0}
+.corner.bl:after{bottom:0;left:0}
+.corner.br{bottom:20px;right:20px}
+.corner.br:before{bottom:0;right:0}
+.corner.br:after{bottom:0;right:0}
+
+.sparkles{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:16px}
+.sparkle-dot{position:absolute;width:14px;height:14px;animation:floatSparkle 3.5s ease-in-out infinite;opacity:0}
+.sparkle-dot:before,.sparkle-dot:after{
+  content:'';position:absolute;top:50%;left:50%;
+  background:linear-gradient(to right,transparent 0%,#FFF6D5 50%,transparent 100%);
+  transform:translate(-50%,-50%);
+  filter:drop-shadow(0 0 8px rgba(255,241,168,1)) drop-shadow(0 0 14px rgba(212,175,55,0.7));
+}
+.sparkle-dot:before{width:22px;height:2px}
+.sparkle-dot:after{width:2px;height:22px}
+@keyframes floatSparkle{
+  0%,100%{opacity:0;transform:translateY(0) scale(0.4) rotate(0deg)}
+  50%{opacity:1;transform:translateY(-15px) scale(1.3) rotate(180deg)}
+}
+
+.bismillah{font-family:'Amiri',serif;font-size:24px;color:#062115;margin:10px 0;position:relative;z-index:2}
+.ayah{font-family:'Amiri',serif;font-size:22px;color:#99731c;line-height:1.8;margin-bottom:10px;position:relative;z-index:2;text-shadow:0 1px 0 rgba(255,255,255,0.7)}
+
+.divider{display:flex;align-items:center;justify-content:center;margin:20px 0;position:relative;z-index:2}
+.divider:before,.divider:after{content:'';height:1px;width:30%;background:linear-gradient(to right,transparent,#D4AF37,transparent)}
+.divider span{color:#D4AF37;margin:0 15px;text-shadow:0 0 6px rgba(212,175,55,0.6)}
+
+.couple{
+  font-family:'Great Vibes',cursive;font-size:68px;color:#062115;line-height:1.1;
+  position:relative;z-index:2;
+  text-shadow:
+    0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),
+    0 4px 10px rgba(212,175,55,0.4),0 8px 20px rgba(212,175,55,0.2);
+  animation:coupleGlow 3s ease-in-out infinite;
+}
+@keyframes coupleGlow{
+  0%,100%{text-shadow:0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),0 4px 10px rgba(212,175,55,0.4),0 8px 20px rgba(212,175,55,0.2)}
+  50%{text-shadow:0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),0 4px 16px rgba(212,175,55,0.7),0 8px 30px rgba(212,175,55,0.5)}
+}
+.couple .heart{font-size:30px;color:#a93226;display:inline-block;margin:0 12px;text-shadow:0 0 8px rgba(169,50,38,0.5);animation:heartBeat 2s ease-in-out infinite}
+@keyframes heartBeat{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.15)}
+}
+
+.invite{font-size:17px;color:#1a1a1a;font-style:italic;line-height:1.6;position:relative;z-index:2}
+
+.quiz-hint-arrow{
+  font-size:36px;color:#99731c;text-align:center;margin:24px 0 -4px 0;
+  animation:bounceDown 1.4s ease-in-out infinite;position:relative;z-index:2;
+  text-shadow:0 3px 8px rgba(153,115,28,0.5),0 0 12px rgba(212,175,55,0.5);
+}
+@keyframes bounceDown{
+  0%,100%{transform:translateY(0);opacity:0.7}
+  50%{transform:translateY(12px);opacity:1}
+}
+
+.quiz-unlock-banner{
+  font-family:'Playfair Display',serif;font-style:italic;font-size:14px;font-weight:600;
+  color:#8A6511;text-align:center;letter-spacing:1px;margin-bottom:10px;position:relative;z-index:2;
+}
+
+.quiz{
+  margin-top:6px;padding:24px 20px 22px;
+  background:linear-gradient(180deg,#FFFDF5,#FDF5E6);
+  border:2px solid #D4AF37;border-radius:14px;
+  position:relative;z-index:2;
+  box-shadow:0 12px 30px rgba(0,0,0,0.15),0 0 0 0 rgba(212,175,55,0.6),inset 0 2px 0 rgba(255,255,255,0.9);
+  animation:quizGlow 2.4s ease-in-out infinite;
+}
+@keyframes quizGlow{
+  0%,100%{box-shadow:0 12px 30px rgba(0,0,0,0.15),0 0 0 0 rgba(212,175,55,0.6),inset 0 2px 0 rgba(255,255,255,0.9)}
+  50%{box-shadow:0 12px 34px rgba(0,0,0,0.2),0 0 0 16px rgba(212,175,55,0),inset 0 2px 0 rgba(255,255,255,0.9)}
+}
+
+.quiz-head{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#062115;margin-bottom:6px;line-height:1.4}
+.quiz-subhead{font-family:'Cinzel Decorative',serif;font-size:10px;letter-spacing:3px;color:#8A6511;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.quiz-q{font-family:'Playfair Display',serif;font-style:italic;font-size:15px;color:#1a1a1a;margin-bottom:16px;line-height:1.55}
+
+.quiz-btn{
+  display:block;width:100%;padding:13px 14px;margin-bottom:10px;
+  background:#FFFCF9;border:1px solid rgba(212,175,55,0.8);
+  color:#062115;font-family:'Playfair Display',serif;font-size:15px;font-weight:600;font-style:italic;
+  border-radius:8px;cursor:pointer;text-align:left;transition:all 0.25s ease;touch-action:manipulation;
+  box-shadow:0 3px 8px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.quiz-btn:active{transform:scale(0.985)}
+.quiz-btn.correct{background:linear-gradient(135deg,#D4AF37,#8A6511);color:#FFFCF9;border-color:#8A6511;box-shadow:0 6px 18px rgba(138,101,17,0.5)}
+.quiz-btn.wrong{background:#FBE3E9;color:#8B3A4A;border-color:#B76E79}
+#feedback{font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:#062115;margin-top:12px;min-height:22px;line-height:1.5}
+.quiz-tap-hint{font-family:'Cinzel Decorative',serif;font-size:9px;letter-spacing:2px;color:#8A6511;text-transform:uppercase;font-weight:700;margin-top:10px;opacity:0.85}
+
+#continueBtn{
+  display:none;margin:20px auto 0;padding:13px 32px;
+  background:linear-gradient(135deg,#0A3323,#062115);color:#FDF5E6;border:none;border-radius:30px;
+  font-family:'Cinzel Decorative',serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,0,0,0.5),inset 0 1px 0 rgba(212,175,55,0.3);
+  touch-action:manipulation;
+}
+#continueBtn.show{display:block;animation:pulseContinue 2s ease-in-out infinite}
+@keyframes pulseContinue{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.04)}
+}
+
+.details{font-size:17px;color:#1a1a1a;line-height:1.8;margin:20px 0;position:relative;z-index:2}
+.details .time{font-family:'Cinzel Decorative',serif;font-weight:700;color:#062115;font-size:18px;display:block;margin-bottom:8px}
+
+.scratch-section{margin-top:20px;display:flex;flex-direction:column;align-items:center;position:relative;z-index:2}
+.scratch-title{font-size:15px;color:#062115;margin-bottom:15px;font-style:italic;font-weight:600;text-align:center}
+.scratch-wrap{position:relative;width:250px;height:180px;border-radius:8px;box-shadow:0 10px 25px rgba(0,0,0,0.2),0 0 0 1px rgba(212,175,55,0.4)}
+.secret-date{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  font-size:32px;font-weight:600;color:#062115;font-family:'Playfair Display',serif;
+}
+.secret-date span{font-family:'Cinzel Decorative',serif;font-size:13px;color:#8A6511;margin-bottom:5px;font-weight:700;letter-spacing:1px}
+
+.hidden{
+  opacity:0;visibility:hidden;max-height:0;overflow:hidden;
+  transition:opacity 1.3s ease,max-height 1.3s ease,visibility 0s 1.3s;
+  width:100%;margin-top:25px;display:flex;flex-direction:column;align-items:center;
+}
+.hidden.revealed{opacity:1;visibility:visible;max-height:1000px;transition:opacity 1.3s ease,max-height 1.3s ease,visibility 0s}
+
+.countdown-title{font-family:'Cinzel Decorative',serif;font-size:13px;color:#8A6511;margin-bottom:10px;font-weight:700;letter-spacing:1px}
+.countdown{display:flex;gap:12px;margin-bottom:30px}
+.time-box{
+  display:flex;flex-direction:column;align-items:center;
+  background:linear-gradient(180deg,#FFFDF5,#FDF5E6);
+  border:1px solid #D4AF37;padding:10px 14px;border-radius:8px;min-width:58px;
+  box-shadow:0 5px 14px rgba(0,0,0,0.1),inset 0 1px 0 rgba(255,255,255,0.9);
+}
+.time-box span{font-size:22px;color:#062115;font-weight:700;font-family:'Playfair Display',serif;line-height:1}
+.time-box p{font-size:9px;color:#8A6511;text-transform:uppercase;font-family:'Cinzel Decorative',serif;letter-spacing:1px;margin-top:4px;font-weight:700}
+
+.scratch-rect{position:relative;width:280px;height:110px;border-radius:8px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.15),0 0 0 1px rgba(212,175,55,0.4)}
+.secret-trans{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;padding:15px;
+  font-size:14px;color:#062115;font-family:'Playfair Display',serif;font-style:italic;
+  line-height:1.5;background:rgba(253,245,230,0.95);text-align:center;
+}
+canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crosshair;border-radius:8px}
+
+.back-link{
+  display:inline-block;margin-top:22px;padding:10px 24px;background:transparent;
+  border:1px solid rgba(138,101,17,0.6);color:#8A6511;
+  font-family:'Playfair Display',serif;font-style:italic;font-size:13px;border-radius:24px;
+  cursor:pointer;text-decoration:none;transition:all 0.25s ease;position:relative;z-index:2;
+}
+.back-link:active{background:rgba(212,175,55,0.15)}
 </style>
 </head>
 <body>
 
-<div id="mobile-frame">
-  <!-- Envelope Layer -->
-  <div id="envelope-screen">
-    <div class="envelope-wrapper">
-      <div class="envelope-body"></div>
-      <div class="envelope-flap" id="flap"></div>
-      <button class="seal" id="seal" onclick="triggerOpen()">OPEN</button>
+<div id="frame">
+
+  <div id="envelope" onclick="openEnvelope()">
+
+    <!-- Falling gold dust -->
+    <div class="dust">
+      <div class="dust-particle" style="left:8%;animation-duration:8s;animation-delay:0s"></div>
+      <div class="dust-particle" style="left:18%;animation-duration:10s;animation-delay:1.5s"></div>
+      <div class="dust-particle" style="left:28%;animation-duration:7s;animation-delay:3s"></div>
+      <div class="dust-particle" style="left:42%;animation-duration:11s;animation-delay:2s"></div>
+      <div class="dust-particle" style="left:55%;animation-duration:8.5s;animation-delay:4s"></div>
+      <div class="dust-particle" style="left:68%;animation-duration:9s;animation-delay:0.8s"></div>
+      <div class="dust-particle" style="left:80%;animation-duration:7.5s;animation-delay:5s"></div>
+      <div class="dust-particle" style="left:92%;animation-duration:10.5s;animation-delay:2.5s"></div>
+      <div class="dust-particle" style="left:35%;animation-duration:9.5s;animation-delay:6s"></div>
+      <div class="dust-particle" style="left:75%;animation-duration:8s;animation-delay:4.5s"></div>
+    </div>
+
+    <!-- Bright star sparkles -->
+    <div class="sparkles-envelope">
+      <div class="sparkle-gold" style="top:12%;left:10%;animation-delay:0s"></div>
+      <div class="sparkle-gold" style="top:22%;left:88%;animation-delay:0.6s"></div>
+      <div class="sparkle-gold" style="top:68%;left:6%;animation-delay:1.2s"></div>
+      <div class="sparkle-gold" style="top:78%;left:92%;animation-delay:1.8s"></div>
+      <div class="sparkle-gold" style="top:45%;left:15%;animation-delay:0.9s"></div>
+      <div class="sparkle-gold" style="top:35%;left:82%;animation-delay:1.5s"></div>
+      <div class="sparkle-gold" style="top:55%;left:50%;animation-delay:2.1s"></div>
+    </div>
+
+    <!-- THE NEW PREMIUM ENVELOPE -->
+    <div class="envelope-wrap">
+      <!-- Inner gold lining -->
+      <div class="env-lining"></div>
+
+      <!-- Envelope body -->
+      <div class="env-body">
+        <div class="corner-orn tl"></div>
+        <div class="corner-orn tr"></div>
+        <div class="corner-orn bl"></div>
+        <div class="corner-orn br"></div>
+      </div>
+
+      <!-- Letter inside -->
+      <div class="env-letter">
+        <div class="letter-inner">N &amp; T</div>
+      </div>
+
+      <!-- V-shaped flap -->
+      <div class="env-flap"></div>
+
+      <!-- Wax seal -->
+      <div class="wax-seal">N&amp;T</div>
+
+      <!-- Floating hearts -->
+      <div class="heart-float">🤍</div>
+      <div class="heart-float">🤍</div>
+      <div class="heart-float">🤍</div>
+      <div class="heart-float">🤍</div>
+      <div class="heart-float">🤍</div>
+      <div class="heart-float">🤍</div>
     </div>
   </div>
 
-  <div id="pages-container">
-    
-    <!-- PAGE 1: The Blessing & Quiz -->
-    <div class="page" id="page-1">
-      <div class="card-inner">
-        <div class="luxury-border"></div>
+  <div id="pages">
+    <div class="page" id="page1">
+      <div class="card">
+        <div class="border"></div>
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="sparkles">
+          <div class="sparkle-dot" style="top:6%;left:12%;animation-delay:0s"></div>
+          <div class="sparkle-dot" style="top:20%;left:88%;animation-delay:1.2s"></div>
+          <div class="sparkle-dot" style="top:50%;left:6%;animation-delay:2.4s"></div>
+          <div class="sparkle-dot" style="top:72%;left:92%;animation-delay:0.8s"></div>
+          <div class="sparkle-dot" style="top:88%;left:15%;animation-delay:3s"></div>
+          <div class="sparkle-dot" style="top:38%;left:50%;animation-delay:1.8s"></div>
+          <div class="sparkle-dot" style="top:62%;left:35%;animation-delay:0.4s"></div>
+          <div class="sparkle-dot" style="top:14%;left:65%;animation-delay:2.2s"></div>
+        </div>
+
         <div class="bismillah" dir="rtl">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
         <div class="ayah" dir="rtl">يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا...</div>
-        
         <div class="divider"><span>✦</span></div>
         <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
-        <div class="invitation-text">request the honor of your presence<br>at their Dawat.</div>
+        <div class="invite">request the honor of your presence<br>at their Walima.</div>
         <div class="divider"><span>✦</span></div>
-        
-        <!-- The Gamified Quiz -->
-        <div class="quiz-section">
+
+        <div class="quiz-hint-arrow">▼</div>
+        <div class="quiz-unlock-banner">Answer below to unlock the date & venue</div>
+
+        <div class="quiz">
+          <div class="quiz-head">🔒 Answer to Unlock Invitation Details</div>
+          <div class="quiz-subhead">Tap an answer to continue</div>
           <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
-          <button class="quiz-btn" onclick="checkAnswer(this, false)">Charity (Sadaqah)</button>
-          <button class="quiz-btn" onclick="checkAnswer(this, true)">Marriage (Nikah)</button>
-          <div id="quiz-feedback"></div>
-          <button class="continue-btn" id="continue-btn" onclick="goToPageTwo()">Continue to Invitation</button>
+          <button class="quiz-btn" data-correct="false" onclick="checkAnswer(this,false)">Charity (Sadaqah)</button>
+          <button class="quiz-btn" data-correct="true" onclick="checkAnswer(this,true)">Marriage (Nikah)</button>
+          <div id="feedback"></div>
+          <div class="quiz-tap-hint">Tap an answer above</div>
+          <button id="continueBtn" onclick="goToPage2()">Reveal Invitation Details →</button>
         </div>
       </div>
     </div>
 
-    <!-- PAGE 2: The Details & Scratch Off -->
-    <div class="page" id="page-2">
-      <div class="card-inner">
-        <div class="luxury-border"></div>
+    <div class="page" id="page2">
+      <div class="card">
+        <div class="border"></div>
+        <div class="corner tl"></div>
+        <div class="corner tr"></div>
+        <div class="corner bl"></div>
+        <div class="corner br"></div>
+
+        <div class="sparkles">
+          <div class="sparkle-dot" style="top:8%;left:10%;animation-delay:0.5s"></div>
+          <div class="sparkle-dot" style="top:28%;left:90%;animation-delay:1.5s"></div>
+          <div class="sparkle-dot" style="top:58%;left:8%;animation-delay:2.5s"></div>
+          <div class="sparkle-dot" style="top:82%;left:88%;animation-delay:1s"></div>
+          <div class="sparkle-dot" style="top:45%;left:50%;animation-delay:3.2s"></div>
+        </div>
+
         <br>
-        <div class="couple" style="font-size: 50px;">The Details</div>
+        <div class="couple" style="font-size:52px">The Details</div>
         <div class="divider"><span>✦</span></div>
-        
         <div class="details">
           <span class="time">11:00 in the morning</span>
           Islam Pura, Nr Subjail Road
         </div>
-        
         <div class="scratch-section">
-          <div class="scratch-title">Please scratch the heart to reveal the date</div>
-          <div class="scratch-wrapper" id="scratch-wrap">
+          <div class="scratch-title">Scratch the heart to reveal the date</div>
+          <div class="scratch-wrap" id="scratchWrap">
             <div class="secret-date">
-              <span>DATE OF DAWAT</span>
+              <span>DATE OF WALIMA</span>
               17 November<br>2026
             </div>
-            <canvas id="scratch-pad"></canvas>
+            <canvas id="scratchPad"></canvas>
           </div>
-          
-          <div class="hidden-reveal-container" id="hidden-elements">
-            <div class="countdown-title">Time Until Dawat</div>
+          <div class="hidden" id="hiddenElements">
+            <div class="countdown-title">Time Until Walima</div>
             <div class="countdown">
-              <div class="time-box"><span id="cd-days">00</span><p>Days</p></div>
-              <div class="time-box"><span id="cd-hours">00</span><p>Hrs</p></div>
-              <div class="time-box"><span id="cd-mins">00</span><p>Mins</p></div>
+              <div class="time-box"><span id="cdDays">00</span><p>Days</p></div>
+              <div class="time-box"><span id="cdHours">00</span><p>Hrs</p></div>
+              <div class="time-box"><span id="cdMins">00</span><p>Mins</p></div>
             </div>
-
             <div class="scratch-title">Scratch for the Ayah Translation</div>
-            <div class="scratch-wrapper-rect">
-              <div class="secret-translation">
-                "O mankind, fear your Lord, who created you from one soul and created from it its mate..."
-              </div>
-              <canvas id="scratch-pad-rect"></canvas>
+            <div class="scratch-rect">
+              <div class="secret-trans">"O mankind, fear your Lord, who created you from one soul and created from it its mate..."</div>
+              <canvas id="scratchRect"></canvas>
             </div>
           </div>
-          
         </div>
+        <br><br>
+        <button class="back-link" onclick="goToPage1()">← Back to the beginning</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-  // 1. Live Countdown Logic
-  const targetDate = new Date("Nov 17, 2026 11:00:00").getTime();
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const distance = targetDate - now;
-    if (distance > 0) {
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      document.getElementById("cd-days").innerText = days < 10 ? "0" + days : days;
-      document.getElementById("cd-hours").innerText = hours < 10 ? "0" + hours : hours;
-      document.getElementById("cd-mins").innerText = minutes < 10 ? "0" + minutes : minutes;
-    }
+function openEnvelope() {
+  var envelope = document.getElementById('envelope');
+  envelope.classList.add('hide');
+  setTimeout(function() {
+    envelope.style.display = 'none';
+  }, 3200);
+}
+
+function checkAnswer(btn, isCorrect) {
+  document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct','wrong'));
+  var feedback = document.getElementById('feedback');
+  var continueBtn = document.getElementById('continueBtn');
+  var hint = document.querySelector('.quiz-tap-hint');
+  if (isCorrect) {
+    btn.classList.add('correct');
+    feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+    feedback.style.color = "#062115";
+    continueBtn.classList.add('show');
+    if (hint) hint.style.display = 'none';
+  } else {
+    btn.classList.add('wrong');
+    feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+    feedback.style.color = "#c0392b";
+    continueBtn.classList.remove('show');
   }
-  updateCountdown(); 
-  setInterval(updateCountdown, 1000);
+}
 
-  // 2. iOS Bulletproof Envelope Animation
-  let isOpened = false;
-  function triggerOpen() {
-    if (isOpened) return;
-    isOpened = true;
-    const flap = document.getElementById('flap');
-    const seal = document.getElementById('seal');
-    const envelopeScreen = document.getElementById('envelope-screen');
-    flap.style.opacity = '0';
-    seal.style.opacity = '0';
-    seal.style.animation = 'none';
-    seal.style.transform = 'translate(-50%, -50%) scale(0.5)';
-    setTimeout(() => {
-      envelopeScreen.style.transform = 'translateY(100vh)';
-      envelopeScreen.style.opacity = '0';
-    }, 500); 
-    setTimeout(() => {
-      envelopeScreen.style.display = 'none';
-    }, 1800);
-  }
-
-  // 3. Quiz Logic
-  function checkAnswer(btn, isCorrect) {
-    const feedback = document.getElementById('quiz-feedback');
-    const continueBtn = document.getElementById('continue-btn');
-    const allBtns = document.querySelectorAll('.quiz-btn');
-    allBtns.forEach(b => { b.classList.remove('correct', 'wrong'); });
-    
-    // Unlock scrolling so they can scroll down past the ad
-    document.getElementById('pages-container').style.overflowY = 'auto';
-
-    if (isCorrect) {
-      btn.classList.add('correct');
-      feedback.innerHTML = "Masha'Allah, that is correct! ✨";
-      feedback.style.color = "var(--primary)";
-      continueBtn.style.display = "block";
-      // Auto-scroll slightly to ensure button is visible
-      setTimeout(() => {
-          continueBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
-    } else {
-      btn.classList.add('wrong');
-      feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
-      feedback.style.color = "#c0392b";
-      continueBtn.style.display = "none";
-    }
-  }
-
-  // 4. Page Transition
-  function goToPageTwo() {
-    const page2 = document.getElementById('page-2');
-    page2.style.display = 'flex';
-    setTimeout(() => {
-      page2.style.opacity = '1';
+function goToPage2() {
+  var page2 = document.getElementById('page2');
+  page2.style.display = 'block';
+  setTimeout(function() {
+    try {
       page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
-  }
+    } catch (e) {
+      document.getElementById('pages').scrollTop = page2.offsetTop;
+    }
+  }, 50);
+}
 
-  // 5. HEART Scratch Canvas Logic
-  const canvasHeart = document.getElementById('scratch-pad');
-  const ctxHeart = canvasHeart.getContext('2d');
-  const wrapperHeart = document.getElementById('scratch-wrap');
-  const hiddenElements = document.getElementById('hidden-elements');
-  canvasHeart.width = 250; canvasHeart.height = 200;
+function goToPage1() {
+  var page1 = document.getElementById('page1');
+  try {
+    page1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    document.getElementById('pages').scrollTop = 0;
+  }
+}
 
-  function drawHeartMask() {
-    ctxHeart.save();
-    let gradient = ctxHeart.createLinearGradient(0, 0, canvasHeart.width, canvasHeart.height);
-    gradient.addColorStop(0, '#E5C158'); gradient.addColorStop(0.3, '#FDF5E6');
-    gradient.addColorStop(0.5, '#D4AF37'); gradient.addColorStop(1, '#8A6511');
-    ctxHeart.fillStyle = gradient;
-    ctxHeart.beginPath();
-    ctxHeart.moveTo(125, 45); ctxHeart.bezierCurveTo(125, 35, 110, 10, 75, 10);
-    ctxHeart.bezierCurveTo(20, 10, 20, 75, 20, 75); ctxHeart.bezierCurveTo(20, 115, 75, 155, 125, 185);
-    ctxHeart.bezierCurveTo(175, 155, 230, 115, 230, 75); ctxHeart.bezierCurveTo(230, 75, 230, 10, 175, 10);
-    ctxHeart.bezierCurveTo(140, 10, 125, 35, 125, 45); ctxHeart.fill();
-    ctxHeart.lineWidth = 2; ctxHeart.strokeStyle = 'rgba(255,255,255,0.4)';
-    ctxHeart.stroke(); ctxHeart.restore();
+try {
+  var target = new Date(2026, 10, 17, 11, 0, 0).getTime();
+  function updateCountdown() {
+    var now = new Date().getTime();
+    var distance = target - now;
+    if (distance > 0) {
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var mins = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      document.getElementById("cdDays").innerText = days < 10 ? "0" + days : days;
+      document.getElementById("cdHours").innerText = hours < 10 ? "0" + hours : hours;
+      document.getElementById("cdMins").innerText = mins < 10 ? "0" + mins : mins;
+    }
   }
-  drawHeartMask();
-  ctxHeart.globalCompositeOperation = 'destination-out';
-  ctxHeart.lineWidth = 42; ctxHeart.lineCap = 'round'; ctxHeart.lineJoin = 'round';
-  
-  let isDrawingHeart = false; let scratchTracker = 0; let isTimerRevealed = false;
-  
-  function getPosHeart(e) {
-    const rect = canvasHeart.getBoundingClientRect();
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: clientX - rect.left, y: clientY - rect.top };
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+} catch(e) {}
+
+try {
+  var canvas = document.getElementById('scratchPad');
+  var ctx = canvas.getContext('2d');
+  var hidden = document.getElementById('hiddenElements');
+  canvas.width = 250;
+  canvas.height = 180;
+  ctx.save();
+  var gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#E5C158');
+  gradient.addColorStop(0.3, '#FDF5E6');
+  gradient.addColorStop(0.5, '#D4AF37');
+  gradient.addColorStop(1, '#8A6511');
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.moveTo(125, 40);
+  ctx.bezierCurveTo(125, 30, 110, 5, 75, 5);
+  ctx.bezierCurveTo(20, 5, 20, 70, 20, 70);
+  ctx.bezierCurveTo(20, 110, 75, 145, 125, 175);
+  ctx.bezierCurveTo(175, 145, 230, 110, 230, 70);
+  ctx.bezierCurveTo(230, 70, 230, 5, 175, 5);
+  ctx.bezierCurveTo(140, 5, 125, 30, 125, 40);
+  ctx.fill();
+  ctx.restore();
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.lineWidth = 42;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  var drawing = false;
+  var tracker = 0;
+  var revealed = false;
+  function getPos(e) {
+    var rect = canvas.getBoundingClientRect();
+    var x = e.touches ? e.touches[0].clientX : e.clientX;
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    return {x: x - rect.left, y: y - rect.top};
   }
-  function startDrawHeart(e) { isDrawingHeart = true; wrapperHeart.style.animation = 'none'; scratchHeart(e); }
-  function endDrawHeart() { isDrawingHeart = false; ctxHeart.beginPath(); }
-  function scratchHeart(e) {
-    if (!isDrawingHeart) return;
-    if(e.cancelable) e.preventDefault();
-    const pos = getPosHeart(e);
-    ctxHeart.lineTo(pos.x, pos.y); ctxHeart.stroke();
-    ctxHeart.beginPath(); ctxHeart.moveTo(pos.x, pos.y);
-    if (!isTimerRevealed) {
-      scratchTracker++;
-      if (scratchTracker > 35) { 
-        hiddenElements.classList.add('revealed');
-        setTimeout(() => { hiddenElements.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, 500);
-        isTimerRevealed = true;
+  function start(e) { drawing = true; scratch(e); }
+  function end() { drawing = false; ctx.beginPath(); }
+  function scratch(e) {
+    if (!drawing) return;
+    if (e.cancelable) e.preventDefault();
+    var pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    if (!revealed) {
+      tracker++;
+      if (tracker > 35) {
+        hidden.classList.add('revealed');
+        revealed = true;
       }
     }
   }
-  canvasHeart.addEventListener('mousedown', startDrawHeart); canvasHeart.addEventListener('mousemove', scratchHeart);
-  canvasHeart.addEventListener('mouseup', endDrawHeart); canvasHeart.addEventListener('mouseleave', endDrawHeart);
-  canvasHeart.addEventListener('touchstart', startDrawHeart, { passive: false });
-  canvasHeart.addEventListener('touchmove', scratchHeart, { passive: false });
-  canvasHeart.addEventListener('touchend', endDrawHeart);
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', scratch);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+  canvas.addEventListener('touchstart', start, {passive: false});
+  canvas.addEventListener('touchmove', scratch, {passive: false});
+  canvas.addEventListener('touchend', end);
+} catch(e) {}
 
-  // 6. RECTANGLE Translation Scratch Canvas Logic
-  const canvasRect = document.getElementById('scratch-pad-rect');
-  const ctxRect = canvasRect.getContext('2d');
-  canvasRect.width = 280; canvasRect.height = 110;
+try {
+  var canvasR = document.getElementById('scratchRect');
+  var ctxR = canvasR.getContext('2d');
+  canvasR.width = 280;
+  canvasR.height = 110;
+  ctxR.save();
+  var gradR = ctxR.createLinearGradient(0, 0, canvasR.width, canvasR.height);
+  gradR.addColorStop(0, '#E5C158');
+  gradR.addColorStop(0.5, '#D4AF37');
+  gradR.addColorStop(1, '#8A6511');
+  ctxR.fillStyle = gradR;
+  ctxR.fillRect(0, 0, canvasR.width, canvasR.height);
+  ctxR.fillStyle = "#062115";
+  ctxR.font = "italic 18px 'Playfair Display'";
+  ctxR.textAlign = "center";
+  ctxR.fillText("Scratch Here", canvasR.width / 2, canvasR.height / 2 + 6);
+  ctxR.restore();
+  ctxR.globalCompositeOperation = 'destination-out';
+  ctxR.lineWidth = 35;
+  ctxR.lineCap = 'round';
+  ctxR.lineJoin = 'round';
+  var drawingR = false;
+  function getPosR(e) {
+    var rect = canvasR.getBoundingClientRect();
+    var x = e.touches ? e.touches[0].clientX : e.clientX;
+    var y = e.touches ? e.touches[0].clientY : e.clientY;
+    return {x: x - rect.left, y: y - rect.top};
+  }
+  function startR(e) { drawingR = true; scratchR(e); }
+  function endR() { drawingR = false; ctxR.beginPath(); }
+  function scratchR(e) {
+    if (!drawingR) return;
+    if (e.cancelable) e.preventDefault();
+    var pos = getPosR(e);
+    ctxR.lineTo(pos.x, pos.y);
+    ctxR.stroke();
+    ctxR.beginPath();
+    ctxR.moveTo(pos.x, pos.y);
+  }
+  canvasR.addEventListener('mousedown', startR);
+  canvasR.addEventListener('mousemove', scratchR);
+  canvasR.addEventListener('mouseup', endR);
+  canvasR.addEventListener('mouseleave', endR);
+  canvasR.addEventListener('touchstart', startR, {passive: false});
+  canvasR.addEventListener('touchmove', scratchR, {passive: false});
+  canvasR.addEventListener('touchend', endR);
+} catch(e) {}
+</script>
 
-  function drawRectMask() {
-    ctxRect.save();
-    let gradient = ctxRect.createLinearGradient(0, 0, canvasRect.width, canvasRect.height);
-    gradient.addColorStop(0, '#E5C158'); gradient.addColorStop(0.5, '#D4AF37'); gradient.addColorStop(1, '#8A6511');
-    ctxRect.fillStyle = gradient; ctxRect.fillRect(0, 0, canvasRect.width, canvasRect.height);
-    ctxRect.fillStyle = "#062115"; ctxRect.font = "italic 18px 'Playfair Display'";
-    ctxRect.textAlign = "center"; ctxRect.fillText("Sc
+</body>
+</html>
