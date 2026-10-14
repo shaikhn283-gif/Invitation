@@ -10,68 +10,66 @@
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-/* ========== ENVELOPE OPENING SCREEN ========== */
+/* ========== ENVELOPE SCREEN ========== */
 #envelope{
   position:absolute;top:0;left:0;width:100%;height:100%;
   background:radial-gradient(circle at 50% 50%, #0A3323 0%, #062115 60%, #02100a 100%);
   display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;
   touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-  transition:opacity 1s ease 2.6s;overflow:hidden;
+  transition:opacity 0.7s ease 3s;overflow:hidden;
+  transform:translateZ(0);
 }
 #envelope.hide{opacity:0;pointer-events:none}
 
-/* Massive pulsing gold halo */
 #envelope:before{
   content:'';position:absolute;top:50%;left:50%;
-  width:520px;height:520px;transform:translate(-50%,-50%);
-  background:radial-gradient(circle,rgba(212,175,55,0.55) 0%,rgba(212,175,55,0.22) 30%,rgba(212,175,55,0.06) 55%,transparent 75%);
+  width:500px;height:500px;margin:-250px 0 0 -250px;
+  background:radial-gradient(circle,rgba(212,175,55,0.5) 0%,rgba(212,175,55,0.18) 32%,rgba(212,175,55,0.05) 55%,transparent 75%);
   border-radius:50%;pointer-events:none;
   animation:haloPulse 3s ease-in-out infinite;
+  transform:translateZ(0);will-change:transform,opacity;
 }
 @keyframes haloPulse{
-  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:0.7}
-  50%{transform:translate(-50%,-50%) scale(1.25);opacity:1}
+  0%,100%{transform:scale(1);opacity:0.75}
+  50%{transform:scale(1.22);opacity:1}
 }
 
-/* Rotating dashed ring */
 #envelope:after{
   content:'';position:absolute;top:50%;left:50%;
-  width:440px;height:440px;transform:translate(-50%,-50%);
+  width:440px;height:440px;margin:-220px 0 0 -220px;
   border:2px dashed rgba(212,175,55,0.35);border-radius:50%;
   pointer-events:none;animation:ringRotate 25s linear infinite;
+  transform:translateZ(0);will-change:transform;
 }
 @keyframes ringRotate{
-  0%{transform:translate(-50%,-50%) rotate(0deg)}
-  100%{transform:translate(-50%,-50%) rotate(360deg)}
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
 }
 
-/* Falling gold dust */
 .dust{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
 .dust-particle{
   position:absolute;top:-20px;width:6px;height:6px;border-radius:50%;
   background:radial-gradient(circle,#FFF6D5 0%,#D4AF37 50%,#8A6511 100%);
-  box-shadow:0 0 8px rgba(212,175,55,0.9),0 0 14px rgba(255,241,168,0.6);
   opacity:0;animation:dustFall linear infinite;
+  transform:translateZ(0);will-change:transform,opacity;
 }
 @keyframes dustFall{
-  0%{transform:translateY(-10vh) translateX(0);opacity:0}
+  0%{transform:translateY(-10vh);opacity:0}
   10%{opacity:1}
-  50%{transform:translateY(50vh) translateX(15px);opacity:0.85}
   90%{opacity:0.5}
-  100%{transform:translateY(115vh) translateX(-15px);opacity:0}
+  100%{transform:translateY(115vh);opacity:0}
 }
 
-/* Gold star sparkles */
 .sparkles-envelope{position:absolute;inset:0;pointer-events:none;z-index:2}
 .sparkle-gold{
   position:absolute;width:10px;height:10px;opacity:0;
-  animation:twinkle 2.2s ease-in-out infinite;
+  animation:twinkle 2.4s ease-in-out infinite;
+  transform:translateZ(0);will-change:transform,opacity;
 }
 .sparkle-gold:before,.sparkle-gold:after{
   content:'';position:absolute;top:50%;left:50%;
-  background:linear-gradient(to right,transparent 0%,#FFF6D5 50%,transparent 100%);
+  background:radial-gradient(circle,#FFF6D5,#D4AF37);
   transform:translate(-50%,-50%);border-radius:50%;
-  filter:drop-shadow(0 0 6px rgba(255,241,168,1));
 }
 .sparkle-gold:before{width:30px;height:2px}
 .sparkle-gold:after{width:2px;height:30px}
@@ -80,37 +78,56 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   50%{opacity:1;transform:scale(1.2) rotate(45deg)}
 }
 
-/* ========== THE NEW PREMIUM ENVELOPE ========== */
+/* ========== ENVELOPE ========== */
 .envelope-wrap{
   position:relative;
   width:340px;
   height:230px;
-  perspective:1200px;
+  perspective:1400px;
   z-index:3;
   pointer-events:none;
 }
 
-/* Gold inner lining — peeks out from behind flap */
+/* Outer gold lining frame */
 .env-lining{
-  position:absolute;
-  inset:0;
+  position:absolute;inset:-3px;
   background:linear-gradient(160deg,#F5E0B0 0%,#D4AF37 30%,#8A6511 70%,#5A3811 100%);
-  border-radius:4px;
+  border-radius:6px;
   z-index:1;
-  box-shadow:0 0 20px rgba(212,175,55,0.4);
+  box-shadow:0 0 25px rgba(212,175,55,0.45);
 }
 
-/* Envelope body — deep emerald with gold trim */
+/* Letter — behind the body */
+.env-letter{
+  position:absolute;left:50%;bottom:22px;
+  transform:translateX(-50%) translateY(0);
+  width:290px;height:170px;
+  background:linear-gradient(135deg,#FFFCF9 0%,#FDF5E6 60%,#F5E8C8 100%);
+  border-radius:3px;
+  z-index:3;
+  transition:transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 1.4s;
+  box-shadow:
+    0 8px 20px rgba(0,0,0,0.4),
+    0 2px 6px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  display:flex;justify-content:center;align-items:center;
+  border:1px solid rgba(212,175,55,0.35);
+  will-change:transform;
+}
+.letter-inner{
+  font-family:'Cinzel Decorative',serif;font-size:26px;font-weight:700;
+  color:#8A6511;letter-spacing:6px;
+  text-shadow:0 1px 0 rgba(255,255,255,0.8);
+}
+#envelope.hide .env-letter{transform:translateX(-50%) translateY(-165px)}
+
+/* Envelope body — front panel */
 .env-body{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(ellipse at 50% 100%, rgba(212,175,55,0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.1) 0%, transparent 40%),
-    linear-gradient(160deg,#0d3b28 0%,#0A3323 40%,#04140d 100%);
+  position:absolute;inset:0;
+  background:linear-gradient(160deg,#0d3b28 0%,#0A3323 40%,#04140d 100%);
   border:1.5px solid rgba(212,175,55,0.55);
   border-radius:4px;
-  z-index:2;
+  z-index:5;
   box-shadow:
     0 30px 60px rgba(0,0,0,0.85),
     0 12px 24px rgba(0,0,0,0.6),
@@ -119,25 +136,15 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
     inset 0 -12px 30px rgba(0,0,0,0.55);
   overflow:hidden;
 }
-
-/* Diagonal crease lines on body — classic envelope look */
 .env-body:before{
   content:'';position:absolute;inset:0;
   background:
     linear-gradient(128deg, transparent calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
     linear-gradient(232deg, transparent calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% - 0.5px), rgba(212,175,55,0.18) calc(50% + 0.5px), transparent calc(50% + 0.5px));
-  pointer-events:none;
 }
 
-/* Gold corner ornaments */
-.corner-orn{
-  position:absolute;width:38px;height:38px;pointer-events:none;
-}
-.corner-orn:before,.corner-orn:after{
-  content:'';position:absolute;
-  background:linear-gradient(90deg,#D4AF37,#F5E0B0,#D4AF37);
-  box-shadow:0 0 4px rgba(212,175,55,0.7);
-}
+.corner-orn{position:absolute;width:38px;height:38px;pointer-events:none}
+.corner-orn:before,.corner-orn:after{content:'';position:absolute;background:linear-gradient(90deg,#D4AF37,#F5E0B0,#D4AF37)}
 .corner-orn:before{width:100%;height:1.5px}
 .corner-orn:after{width:1.5px;height:100%}
 .corner-orn.tl{top:14px;left:14px}
@@ -153,127 +160,112 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 .corner-orn.br:before{bottom:0;right:0}
 .corner-orn.br:after{bottom:0;right:0}
 
-/* Letter inside — cream with monogram */
-.env-letter{
+/* ========== GOLD V-SHAPED INNER LINING ========== */
+/* This is the V-shaped pocket revealed when the flap opens */
+.env-inner-v{
   position:absolute;
-  left:50%;
-  bottom:22px;
-  transform:translateX(-50%) translateY(0);
-  width:290px;
-  height:170px;
-  background:linear-gradient(135deg,#FFFCF9 0%,#FDF5E6 60%,#F5E8C8 100%);
-  border-radius:3px;
-  z-index:3;
-  transition:transform 1.6s cubic-bezier(0.4, 0, 0.2, 1) 1.4s;
-  box-shadow:
-    0 8px 20px rgba(0,0,0,0.4),
-    0 2px 6px rgba(0,0,0,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.95);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  border:1px solid rgba(212,175,55,0.35);
+  top:0;
+  left:0;
+  width:0;
+  height:0;
+  border-left:170px solid transparent;
+  border-right:170px solid transparent;
+  border-top:125px solid #8A6511;
+  z-index:6;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));
 }
-.letter-inner{
-  font-family:'Cinzel Decorative',serif;
-  font-size:26px;
-  font-weight:700;
-  color:#8A6511;
-  letter-spacing:6px;
-  text-shadow:0 1px 0 rgba(255,255,255,0.8);
+/* Inner highlight line to make the V look like a pocket edge */
+.env-inner-v:before{
+  content:'';
+  position:absolute;
+  top:-125px;
+  left:-170px;
+  width:0;
+  height:0;
+  border-left:170px solid transparent;
+  border-right:170px solid transparent;
+  border-top:125px solid rgba(245,224,176,0.35);
+  transform:scale(0.94);
+  transform-origin:top center;
 }
-#envelope.hide .env-letter{transform:translateX(-50%) translateY(-140px)}
 
-/* Envelope flap — V shape pointing down */
+/* ========== FLAP — V-shaped CSS triangle ========== */
 .env-flap{
   position:absolute;
   top:0;
   left:0;
-  width:100%;
-  height:55%;
-  background:linear-gradient(180deg,#0F4530 0%,#0d3b28 40%,#0A3323 70%,#072b1c 100%);
-  clip-path:polygon(0 0, 100% 0, 50% 100%);
+  width:0;
+  height:0;
+  border-left:170px solid transparent;
+  border-right:170px solid transparent;
+  border-top:125px solid #0d3b28;
   transform-origin:top center;
-  z-index:4;
-  transition:transform 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.4s, opacity 0.9s ease 1.5s;
-  filter:drop-shadow(0 6px 12px rgba(0,0,0,0.55)) drop-shadow(0 0 4px rgba(212,175,55,0.5));
-}
-/* Subtle gold sheen on the flap */
-.env-flap:before{
-  content:'';
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.12) 0%, transparent 50%),
-    linear-gradient(135deg, transparent 45%, rgba(212,175,55,0.15) 50%, transparent 55%);
-  pointer-events:none;
-}
-#envelope.hide .env-flap{transform:rotateX(-180deg);opacity:0}
-
-/* Premium organic wax seal */
-.wax-seal{
-  position:absolute;
-  top:55%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:92px;
-  height:92px;
-  background:
-    radial-gradient(circle at 35% 28%, #FFF2C9 0%, #F5E0B0 15%, #D4AF37 45%, #8A6511 80%, #5A3811 100%);
-  border-radius:47% 53% 51% 49% / 52% 48% 52% 48%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#4A2C0A;
-  font-family:'Cinzel Decorative',serif;
-  font-size:18px;
-  font-weight:700;
-  letter-spacing:1px;
+  transform:rotateX(0deg);
   z-index:10;
+  transition:transform 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s, z-index 0s linear 1.2s;
+  will-change:transform;
+  filter:drop-shadow(0 6px 12px rgba(0,0,0,0.55));
+}
+#envelope.hide .env-flap{
+  transform:rotateX(-180deg);
+  z-index:1;
+}
+
+/* Wax seal */
+.wax-seal{
+  position:absolute;top:52%;left:50%;
+  transform:translate(-50%,-50%);
+  width:92px;height:92px;
+  background:radial-gradient(circle at 35% 28%, #FFF2C9 0%, #F5E0B0 15%, #D4AF37 45%, #8A6511 80%, #5A3811 100%);
+  border-radius:47% 53% 51% 49% / 52% 48% 52% 48%;
+  display:flex;justify-content:center;align-items:center;
+  color:#4A2C0A;font-family:'Cinzel Decorative',serif;font-size:18px;font-weight:700;
+  letter-spacing:1px;z-index:20;
   text-shadow:0 1px 0 rgba(255,255,255,0.7);
-  transition:opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
-  animation:waxSealPulse 2s ease-in-out infinite;
-  filter:drop-shadow(0 15px 30px rgba(0,0,0,0.7)) drop-shadow(0 5px 12px rgba(212,175,55,0.5));
+  transition:opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+  box-shadow:
+    0 15px 30px rgba(0,0,0,0.7),
+    0 5px 12px rgba(212,175,55,0.5),
+    inset 0 4px 8px rgba(255,255,255,0.85),
+    inset 0 -6px 12px rgba(80,50,20,0.5);
+  will-change:transform,opacity;
 }
 .wax-seal:before{
-  content:'';
-  position:absolute;
-  width:74px;
-  height:74px;
+  content:'';position:absolute;inset:-2px;
   border-radius:50%;
-  border:1.5px dotted rgba(74,44,10,0.5);
+  background:radial-gradient(circle,transparent 55%,rgba(212,175,55,0.55) 65%,transparent 78%);
+  animation:sealHaloPulse 2s ease-in-out infinite;
+  pointer-events:none;
+  transform:translateZ(0);will-change:transform,opacity;
 }
 .wax-seal:after{
-  content:'';
-  position:absolute;
-  top:14px;
-  left:20px;
-  width:26px;
-  height:14px;
-  border-radius:50%;
-  background:radial-gradient(ellipse,rgba(255,255,255,0.95),transparent 70%);
-  filter:blur(1.5px);
+  content:'';position:absolute;
+  width:74px;height:74px;border-radius:50%;
+  border:1.5px dotted rgba(74,44,10,0.5);
+  top:50%;left:50%;transform:translate(-50%,-50%);
 }
-#envelope.hide .wax-seal{opacity:0;transform:translate(-50%,-50%) scale(0.3) rotate(-20deg)}
-@keyframes waxSealPulse{
-  0%,100%{box-shadow:0 15px 30px rgba(0,0,0,0.7),0 5px 12px rgba(212,175,55,0.5),inset 0 4px 8px rgba(255,255,255,0.85),inset 0 -6px 12px rgba(80,50,20,0.5),0 0 0 0 rgba(212,175,55,0.8)}
-  50%{box-shadow:0 15px 30px rgba(0,0,0,0.7),0 5px 12px rgba(212,175,55,0.5),inset 0 4px 8px rgba(255,255,255,0.85),inset 0 -6px 12px rgba(80,50,20,0.5),0 0 0 22px rgba(212,175,55,0)}
+@keyframes sealHaloPulse{
+  0%,100%{transform:scale(1);opacity:0.55}
+  50%{transform:scale(1.35);opacity:0}
+}
+#envelope.hide .wax-seal{
+  opacity:0;
+  transform:translate(-50%,-50%) scale(0.3) rotate(-25deg);
 }
 
-/* Floating gold hearts */
 .heart-float{
   position:absolute;bottom:60px;font-size:26px;opacity:0;
-  pointer-events:none;z-index:4;color:#D4AF37;
-  filter:drop-shadow(0 3px 8px rgba(212,175,55,0.8));
+  pointer-events:none;z-index:15;color:#D4AF37;
   text-shadow:0 0 10px rgba(255,241,168,0.9);
+  will-change:transform,opacity;
 }
-#envelope.hide .heart-float{animation:heartFloat 2.4s ease-out 1.7s forwards}
+#envelope.hide .heart-float{animation:heartFloat 2.4s ease-out 2s forwards}
 .heart-float:nth-child(1){left:25%}
-.heart-float:nth-child(2){left:40%;animation-delay:1.9s}
-.heart-float:nth-child(3){left:55%;animation-delay:1.8s}
-.heart-float:nth-child(4){left:68%;animation-delay:2.1s}
-.heart-float:nth-child(5){left:33%;animation-delay:2.3s}
-.heart-float:nth-child(6){left:60%;animation-delay:2.2s}
+.heart-float:nth-child(2){left:40%;animation-delay:2.2s}
+.heart-float:nth-child(3){left:55%;animation-delay:2.1s}
+.heart-float:nth-child(4){left:68%;animation-delay:2.4s}
+.heart-float:nth-child(5){left:33%;animation-delay:2.6s}
+.heart-float:nth-child(6){left:60%;animation-delay:2.5s}
 @keyframes heartFloat{
   0%{opacity:0;transform:translateY(0) scale(0.4) rotate(0deg)}
   25%{opacity:1}
@@ -299,12 +291,18 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
     0 12px 30px rgba(0,0,0,0.3),
     0 4px 10px rgba(0,0,0,0.2),
     inset 0 2px 0 rgba(255,255,255,1);
-  animation:cardEntry 1.4s cubic-bezier(0.4,0,0.2,1) 2.4s both;
+  contain:layout paint;
+  transform:translateZ(0);
+}
+#page1 .card{
+  animation:cardEntry 1.4s cubic-bezier(0.4,0,0.2,1) 3s both;
+  will-change:transform,opacity;
 }
 @keyframes cardEntry{
-  0%{opacity:0;transform:translateY(80px) scale(0.9)}
-  100%{opacity:1;transform:translateY(0) scale(1)}
+  0%{opacity:0;transform:translateY(80px) scale(0.9) translateZ(0)}
+  100%{opacity:1;transform:translateY(0) scale(1) translateZ(0)}
 }
+#page2 .card{animation:none;opacity:1;transform:none}
 
 .card:before{
   content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
@@ -320,11 +318,10 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   border-radius:12px;pointer-events:none;padding:2px;
   background:linear-gradient(120deg,#8A6511 0%,#FFF2C9 15%,#F5E0B0 25%,#D4AF37 40%,#8A6511 55%,#D4AF37 70%,#FFF2C9 85%,#8A6511 100%);
   background-size:300% 300%;
-  animation:borderShimmer 5s ease-in-out infinite;
+  animation:borderShimmer 6s ease-in-out infinite;
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-          mask-composite:exclude;
-  filter:drop-shadow(0 0 5px rgba(212,175,55,0.7));
+  -webkit-mask-composite:xor;mask-composite:exclude;
+  will-change:background-position;
 }
 @keyframes borderShimmer{
   0%,100%{background-position:0% 50%}
@@ -350,12 +347,15 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 .corner.br:after{bottom:0;right:0}
 
 .sparkles{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:16px}
-.sparkle-dot{position:absolute;width:14px;height:14px;animation:floatSparkle 3.5s ease-in-out infinite;opacity:0}
+.sparkle-dot{
+  position:absolute;width:14px;height:14px;
+  animation:floatSparkle 3.5s ease-in-out infinite;opacity:0;
+  transform:translateZ(0);will-change:transform,opacity;
+}
 .sparkle-dot:before,.sparkle-dot:after{
   content:'';position:absolute;top:50%;left:50%;
-  background:linear-gradient(to right,transparent 0%,#FFF6D5 50%,transparent 100%);
-  transform:translate(-50%,-50%);
-  filter:drop-shadow(0 0 8px rgba(255,241,168,1)) drop-shadow(0 0 14px rgba(212,175,55,0.7));
+  background:radial-gradient(circle,#FFF6D5,#D4AF37);
+  transform:translate(-50%,-50%);border-radius:50%;
 }
 .sparkle-dot:before{width:22px;height:2px}
 .sparkle-dot:after{width:2px;height:22px}
@@ -377,13 +377,12 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   text-shadow:
     0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),
     0 4px 10px rgba(212,175,55,0.4),0 8px 20px rgba(212,175,55,0.2);
-  animation:coupleGlow 3s ease-in-out infinite;
 }
-@keyframes coupleGlow{
-  0%,100%{text-shadow:0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),0 4px 10px rgba(212,175,55,0.4),0 8px 20px rgba(212,175,55,0.2)}
-  50%{text-shadow:0 1px 0 #FFFFFF,0 2px 0 #E8D5A5,0 -1px 1px rgba(0,0,0,0.15),0 4px 16px rgba(212,175,55,0.7),0 8px 30px rgba(212,175,55,0.5)}
+.couple .heart{
+  font-size:30px;color:#a93226;display:inline-block;margin:0 12px;
+  text-shadow:0 0 8px rgba(169,50,38,0.5);
+  animation:heartBeat 2s ease-in-out infinite;will-change:transform;
 }
-.couple .heart{font-size:30px;color:#a93226;display:inline-block;margin:0 12px;text-shadow:0 0 8px rgba(169,50,38,0.5);animation:heartBeat 2s ease-in-out infinite}
 @keyframes heartBeat{
   0%,100%{transform:scale(1)}
   50%{transform:scale(1.15)}
@@ -395,6 +394,7 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   font-size:36px;color:#99731c;text-align:center;margin:24px 0 -4px 0;
   animation:bounceDown 1.4s ease-in-out infinite;position:relative;z-index:2;
   text-shadow:0 3px 8px rgba(153,115,28,0.5),0 0 12px rgba(212,175,55,0.5);
+  will-change:transform,opacity;
 }
 @keyframes bounceDown{
   0%,100%{transform:translateY(0);opacity:0.7}
@@ -411,12 +411,18 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   background:linear-gradient(180deg,#FFFDF5,#FDF5E6);
   border:2px solid #D4AF37;border-radius:14px;
   position:relative;z-index:2;
-  box-shadow:0 12px 30px rgba(0,0,0,0.15),0 0 0 0 rgba(212,175,55,0.6),inset 0 2px 0 rgba(255,255,255,0.9);
-  animation:quizGlow 2.4s ease-in-out infinite;
+  box-shadow:0 12px 30px rgba(0,0,0,0.15),inset 0 2px 0 rgba(255,255,255,0.9);
 }
-@keyframes quizGlow{
-  0%,100%{box-shadow:0 12px 30px rgba(0,0,0,0.15),0 0 0 0 rgba(212,175,55,0.6),inset 0 2px 0 rgba(255,255,255,0.9)}
-  50%{box-shadow:0 12px 34px rgba(0,0,0,0.2),0 0 0 16px rgba(212,175,55,0),inset 0 2px 0 rgba(255,255,255,0.9)}
+.quiz:before{
+  content:'';position:absolute;inset:-2px;border-radius:14px;
+  background:radial-gradient(circle at 50% 50%,transparent 60%,rgba(212,175,55,0.55) 75%,transparent 88%);
+  animation:quizHaloPulse 2.4s ease-in-out infinite;
+  pointer-events:none;
+  transform:translateZ(0);will-change:transform,opacity;
+}
+@keyframes quizHaloPulse{
+  0%,100%{transform:scale(1);opacity:0.6}
+  50%{transform:scale(1.08);opacity:0}
 }
 
 .quiz-head{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:#062115;margin-bottom:6px;line-height:1.4}
@@ -441,12 +447,12 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   background:linear-gradient(135deg,#0A3323,#062115);color:#FDF5E6;border:none;border-radius:30px;
   font-family:'Cinzel Decorative',serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;
   box-shadow:0 8px 22px rgba(0,0,0,0.5),inset 0 1px 0 rgba(212,175,55,0.3);
-  touch-action:manipulation;
+  touch-action:manipulation;will-change:transform;
 }
 #continueBtn.show{display:block;animation:pulseContinue 2s ease-in-out infinite}
 @keyframes pulseContinue{
   0%,100%{transform:scale(1)}
-  50%{transform:scale(1.04)}
+  50%{transform:scale(1.05)}
 }
 
 .details{font-size:17px;color:#1a1a1a;line-height:1.8;margin:20px 0;position:relative;z-index:2}
@@ -504,7 +510,6 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 
   <div id="envelope" onclick="openEnvelope()">
 
-    <!-- Falling gold dust -->
     <div class="dust">
       <div class="dust-particle" style="left:8%;animation-duration:8s;animation-delay:0s"></div>
       <div class="dust-particle" style="left:18%;animation-duration:10s;animation-delay:1.5s"></div>
@@ -518,7 +523,6 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
       <div class="dust-particle" style="left:75%;animation-duration:8s;animation-delay:4.5s"></div>
     </div>
 
-    <!-- Bright star sparkles -->
     <div class="sparkles-envelope">
       <div class="sparkle-gold" style="top:12%;left:10%;animation-delay:0s"></div>
       <div class="sparkle-gold" style="top:22%;left:88%;animation-delay:0.6s"></div>
@@ -529,31 +533,20 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
       <div class="sparkle-gold" style="top:55%;left:50%;animation-delay:2.1s"></div>
     </div>
 
-    <!-- THE NEW PREMIUM ENVELOPE -->
     <div class="envelope-wrap">
-      <!-- Inner gold lining -->
       <div class="env-lining"></div>
-
-      <!-- Envelope body -->
+      <div class="env-letter">
+        <div class="letter-inner">N &amp; T</div>
+      </div>
       <div class="env-body">
         <div class="corner-orn tl"></div>
         <div class="corner-orn tr"></div>
         <div class="corner-orn bl"></div>
         <div class="corner-orn br"></div>
       </div>
-
-      <!-- Letter inside -->
-      <div class="env-letter">
-        <div class="letter-inner">N &amp; T</div>
-      </div>
-
-      <!-- V-shaped flap -->
+      <div class="env-inner-v"></div>
       <div class="env-flap"></div>
-
-      <!-- Wax seal -->
       <div class="wax-seal">N&amp;T</div>
-
-      <!-- Floating hearts -->
       <div class="heart-float">🤍</div>
       <div class="heart-float">🤍</div>
       <div class="heart-float">🤍</div>
@@ -665,7 +658,7 @@ function openEnvelope() {
   envelope.classList.add('hide');
   setTimeout(function() {
     envelope.style.display = 'none';
-  }, 3200);
+  }, 3800);
 }
 
 function checkAnswer(btn, isCorrect) {
@@ -696,7 +689,7 @@ function goToPage2() {
     } catch (e) {
       document.getElementById('pages').scrollTop = page2.offsetTop;
     }
-  }, 50);
+  }, 30);
 }
 
 function goToPage1() {
