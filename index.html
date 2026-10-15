@@ -642,30 +642,51 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 
 <script>
 /* ============================================================
-   AUDIO ENGINE — lowered levels, harder limiting
+   AUDIO ENGINE
    ============================================================ */
 var audioCtx = null;
 var soundOn = true;
 var musicOn = false;
 var musicBus = null;
+var sfxBus = null;
 var limiter = null;
+var musicLowpass = null;
+var sfxLowpass = null;
 var reverbNode = null;
 var reverbGainNode = null;
 var musicTimer = null;
+var noiseBuffer = null;   // pre-generated once
 
 function initAudio() {
   if (audioCtx) return;
   try {
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // ---- HARD LIMITER (brick wall) ----
+    // ---- LOW-PASS FILTER (fixes phone speaker distortion) ----
+    // Phone speakers distort badly on high frequencies.
+    // Cutting everything above 3.5kHz before it reaches the output
+    // smooths the sound dramatically and removes distortion.
+    musicLowpass = audioCtx.createBiquadFilter();
+    musicLowpass.type = 'lowpass';
+    musicLowpass.frequency.value = 3200;
+    musicLowpass.Q.value = 0.7;
+
+    sfxLowpass = audioCtx.createBiquadFilter();
+    sfxLowpass.type = 'lowpass';
+    sfxLowpass.frequency.value = 4000;
+    sfxLowpass.Q.value = 0.7;
+
+    // ---- HARD LIMITER ----
     limiter = audioCtx.createDynamicsCompressor();
-    limiter.threshold.value = -20;    // limit very early
-    limiter.knee.value = 3;           // hard knee = strict
-    limiter.ratio.value = 20;         // maximum ratio
-    limiter.attack.value = 0.001;     // 1ms attack catches everything
-    limiter.release.value = 0.12;
+    limiter.threshold.value = -22;
+    limiter.knee.value = 2;
+    limiter.ratio.value = 20;
+    limiter.attack.value = 0.001;
+    limiter.release.value = 0.1;
     limiter.connect(audioCtx.destination);
+
+    musicLowpass.connect(limiter);
+    sfxLowpass.connect(limiter);
 
     // ---- REVERB ----
     var length = Math.floor(audioCtx.sampleRate * 1.6);
@@ -679,15 +700,30 @@ function initAudio() {
     reverbNode = audioCtx.createConvolver();
     reverbNode.buffer = impulse;
     reverbGainNode = audioCtx.createGain();
-    reverbGainNode.gain.value = 0.08;   // very dry
+    reverbGainNode.gain.value = 0.08;
     reverbNode.connect(reverbGainNode);
-    reverbGainNode.connect(limiter);
+    reverbGainNode.connect(musicLowpass);
 
     // ---- MUSIC BUS ----
     musicBus = audioCtx.createGain();
-    musicBus.gain.value = 0.14;         // lowered again
-    musicBus.connect(limiter);
+    musicBus.gain.value = 0.14;
+    musicBus.connect(musicLowpass);
     musicBus.connect(reverbNode);
+
+    // ---- SFX BUS ----
+    sfxBus = audioCtx.createGain();
+    sfxBus.gain.value = 1;
+    sfxBus.connect(sfxLowpass);
+
+    // ---- PRE-GENERATE NOISE BUFFER (fixes lag) ----
+    // Generating this on every tap causes a JIT compile pause.
+    // Generating once and reusing removes the lag entirely.
+    var nlen = Math.floor(audioCtx.sampleRate * 0.6);
+    noiseBuffer = audioCtx.createBuffer(1, nlen, audioCtx.sampleRate);
+    var nd = noiseBuffer.getChannelData(0);
+    for (var j = 0; j < nlen; j++) {
+      nd[j] = (Math.random() * 2 - 1);
+    }
 
   } catch (e) {}
 }
@@ -720,33 +756,24 @@ var N = {
   B4: 493.88, C5: 523.25, D5: 587.33
 };
 
+/* Pluck — simplified: one pure sine, no harmonic */
 function playPluck(freq, t0, volume, duration) {
   if (!audioCtx || !musicBus) return;
 
-  var o1 = audioCtx.createOscillator();
-  o1.type = 'sine';
-  o1.frequency.value = freq;
-
-  var o2 = audioCtx.createOscillator();
-  o2.type = 'sine';
-  o2.frequency.value = freq * 2;
-  var o2gain = audioCtx.createGain();
-  o2gain.gain.value = 0.10;
+  var o = audioCtx.createOscillator();
+  o.type = 'sine';
+  o.frequency.value = freq;
 
   var amp = audioCtx.createGain();
   amp.gain.setValueAtTime(0, t0);
   amp.gain.linearRampToValueAtTime(volume, t0 + 0.01);
   amp.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
 
-  o1.connect(amp);
-  o2.connect(o2gain);
-  o2gain.connect(amp);
+  o.connect(amp);
   amp.connect(musicBus);
 
-  o1.start(t0);
-  o2.start(t0);
-  o1.stop(t0 + duration + 0.1);
-  o2.stop(t0 + duration + 0.1);
+  o.start(t0);
+  o.stop(t0 + duration + 0.1);
 }
 
 function playSoftPad(freq, t0, volume, duration) {
@@ -770,7 +797,7 @@ function playSoftPad(freq, t0, volume, duration) {
 }
 
 /* ============================================
-   MUSIC — Am – F – C – G loop
+   MUSIC
    ============================================ */
 var CHORDS = [
   { bass: N.A2, pad1: N.A3, pad2: N.E4, arp: [N.A3, N.C4, N.E4, N.A4] },
@@ -794,13 +821,13 @@ function startMusic() {
       var ch = CHORDS[i];
 
       playSoftPad(ch.bass, ct, 0.03, chordDur - 0.5);
-      playSoftPad(ch.pad1, ct, 0.024, chordDur);
-      playSoftPad(ch.pad2, ct, 0.024, chordDur);
+      playSoftPad(ch.pad1, ct, 0.022, chordDur);
+      playSoftPad(ch.pad2, ct, 0.022, chordDur);
 
-      playPluck(ch.arp[0], ct + 0.3, 0.03, 3.0);
-      playPluck(ch.arp[1], ct + 2.0, 0.028, 3.0);
-      playPluck(ch.arp[2], ct + 3.8, 0.028, 3.0);
-      playPluck(ch.arp[3], ct + 5.6, 0.025, 3.5);
+      playPluck(ch.arp[0], ct + 0.3, 0.028, 3.0);
+      playPluck(ch.arp[1], ct + 2.0, 0.026, 3.0);
+      playPluck(ch.arp[2], ct + 3.8, 0.026, 3.0);
+      playPluck(ch.arp[3], ct + 5.6, 0.022, 3.5);
     }
 
     musicTimer = setTimeout(scheduleLoop, 30000);
@@ -818,7 +845,7 @@ function stopMusic() {
 }
 
 /* ============================================
-   SFX — 50% quieter across the board
+   SFX — using pre-generated buffer
    ============================================ */
 
 function playTap() {
@@ -833,58 +860,56 @@ function playTap() {
   amp.gain.linearRampToValueAtTime(0.03, t0 + 0.012);
   amp.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
   osc.connect(amp);
-  amp.connect(limiter);
+  amp.connect(sfxBus);
   osc.start(t0);
   osc.stop(t0 + 0.25);
 }
 
+/* Noise using pre-generated buffer — no more lag */
 function playNoise(duration, volume, delay, freq) {
-  if (!soundOn || !audioCtx) return;
+  if (!soundOn || !audioCtx || !noiseBuffer) return;
   delay = delay || 0;
   volume = volume || 0.02;
   freq = freq || 1600;
   var t0 = audioCtx.currentTime + delay;
-  var len = Math.floor(audioCtx.sampleRate * duration);
-  var buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-  var data = buffer.getChannelData(0);
-  for (var i = 0; i < len; i++) {
-    var env = Math.sin((i / len) * Math.PI);
-    data[i] = (Math.random() * 2 - 1) * env;
-  }
+
   var src = audioCtx.createBufferSource();
-  src.buffer = buffer;
+  src.buffer = noiseBuffer;
+
+  // Apply amplitude envelope via gain
+  var amp = audioCtx.createGain();
+  amp.gain.setValueAtTime(0, t0);
+  amp.gain.linearRampToValueAtTime(volume, t0 + duration * 0.35);
+  amp.gain.linearRampToValueAtTime(0, t0 + duration);
+
   var filter = audioCtx.createBiquadFilter();
   filter.type = 'bandpass';
   filter.frequency.value = freq;
   filter.Q.value = 0.8;
-  var amp = audioCtx.createGain();
-  amp.gain.value = volume;
+
   src.connect(filter);
   filter.connect(amp);
-  amp.connect(limiter);
+  amp.connect(sfxBus);
+
   src.start(t0);
+  src.stop(t0 + duration + 0.05);
 }
 
 /* ================================================
-   ENVELOPE OPEN
+   ENVELOPE OPEN — no starting swooshes
    ================================================ */
 function openEnvelope() {
   initAudio();
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   if (soundOn) playTap();
 
+  // Start music shortly after — no swooshes at opening
   setTimeout(function() {
     if (soundOn && !musicOn) startMusic();
   }, 500);
 
   var envelope = document.getElementById('envelope');
   envelope.classList.add('hide');
-
-  // All swooshes halved from previous version
-  setTimeout(function() { if (soundOn) playNoise(0.28, 0.018, 0, 2200); }, 200);
-  setTimeout(function() { if (soundOn) playNoise(0.55, 0.015, 0, 1400); }, 700);
-  setTimeout(function() { if (soundOn) playNoise(0.4, 0.014, 0, 1100); }, 1600);
-  setTimeout(function() { if (soundOn) playNoise(0.5, 0.013, 0, 900); }, 3000);
 
   setTimeout(function() {
     envelope.style.display = 'none';
@@ -908,20 +933,17 @@ function checkAnswer(btn, isCorrect) {
     feedback.style.color = "#062115";
     continueBtn.classList.add('show');
     if (hint) hint.style.display = 'none';
-    if (soundOn) playNoise(0.25, 0.015, 0, 2200);
   } else {
     btn.classList.add('wrong');
     feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
     feedback.style.color = "#c0392b";
     continueBtn.classList.remove('show');
-    if (soundOn) playNoise(0.2, 0.013, 0, 700);
   }
 }
 
 function goToPage2() {
   initAudio();
   if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  if (soundOn) playNoise(0.4, 0.015, 0, 1600);
   var page2 = document.getElementById('page2');
   page2.style.display = 'block';
   setTimeout(function() {
@@ -1012,7 +1034,7 @@ try {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     drawing = true;
     if (!scratchSoundPlayed && soundOn) {
-      playNoise(0.22, 0.013, 0, 900);
+      playNoise(0.25, 0.015, 0, 900);
       scratchSoundPlayed = true;
     }
     scratch(e);
@@ -1031,7 +1053,6 @@ try {
       if (tracker > 35) {
         hidden.classList.add('revealed');
         revealed = true;
-        if (soundOn) playNoise(0.6, 0.015, 0, 1400);
       }
     }
   }
@@ -1082,7 +1103,7 @@ try {
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     drawingR = true;
     if (!rectScratchSoundPlayed && soundOn) {
-      playNoise(0.22, 0.013, 0, 900);
+      playNoise(0.25, 0.015, 0, 900);
       rectScratchSoundPlayed = true;
     }
     scratchR(e);
