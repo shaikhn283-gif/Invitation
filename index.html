@@ -10,7 +10,20 @@
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-/* ========== ENVELOPE SCREEN ========== */
+#muteBtn{
+  position:absolute;top:14px;right:14px;z-index:999;
+  width:38px;height:38px;border-radius:50%;
+  background:rgba(212,175,55,0.15);
+  border:1px solid rgba(212,175,55,0.5);
+  color:#D4AF37;font-size:18px;
+  display:flex;justify-content:center;align-items:center;
+  cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:all 0.25s ease;
+  touch-action:manipulation;
+}
+#muteBtn:active{transform:scale(0.9)}
+#muteBtn.muted{opacity:0.5;color:#8A6511;border-color:rgba(138,101,23,0.4)}
+
 #envelope{
   position:absolute;top:0;left:0;width:100%;height:100%;
   background:radial-gradient(circle at 50% 50%, #0A3323 0%, #062115 60%, #02100a 100%);
@@ -78,7 +91,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   50%{opacity:1;transform:scale(1.2) rotate(45deg)}
 }
 
-/* ========== ENVELOPE ========== */
 .envelope-wrap{
   position:relative;
   width:340px;
@@ -88,7 +100,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   pointer-events:none;
 }
 
-/* Outer gold lining frame */
 .env-lining{
   position:absolute;inset:-3px;
   background:linear-gradient(160deg,#F5E0B0 0%,#D4AF37 30%,#8A6511 70%,#5A3811 100%);
@@ -97,7 +108,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   box-shadow:0 0 25px rgba(212,175,55,0.45);
 }
 
-/* Letter — behind the body */
 .env-letter{
   position:absolute;left:50%;bottom:22px;
   transform:translateX(-50%) translateY(0);
@@ -121,7 +131,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 }
 #envelope.hide .env-letter{transform:translateX(-50%) translateY(-165px)}
 
-/* Envelope body — front panel */
 .env-body{
   position:absolute;inset:0;
   background:linear-gradient(160deg,#0d3b28 0%,#0A3323 40%,#04140d 100%);
@@ -160,42 +169,21 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
 .corner-orn.br:before{bottom:0;right:0}
 .corner-orn.br:after{bottom:0;right:0}
 
-/* ========== GOLD V-SHAPED INNER LINING ========== */
-/* This is the V-shaped pocket revealed when the flap opens */
 .env-inner-v{
   position:absolute;
-  top:0;
-  left:0;
-  width:0;
-  height:0;
+  top:0;left:0;
+  width:0;height:0;
   border-left:170px solid transparent;
   border-right:170px solid transparent;
   border-top:125px solid #8A6511;
   z-index:6;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,0.4));
 }
-/* Inner highlight line to make the V look like a pocket edge */
-.env-inner-v:before{
-  content:'';
-  position:absolute;
-  top:-125px;
-  left:-170px;
-  width:0;
-  height:0;
-  border-left:170px solid transparent;
-  border-right:170px solid transparent;
-  border-top:125px solid rgba(245,224,176,0.35);
-  transform:scale(0.94);
-  transform-origin:top center;
-}
 
-/* ========== FLAP — V-shaped CSS triangle ========== */
 .env-flap{
   position:absolute;
-  top:0;
-  left:0;
-  width:0;
-  height:0;
+  top:0;left:0;
+  width:0;height:0;
   border-left:170px solid transparent;
   border-right:170px solid transparent;
   border-top:125px solid #0d3b28;
@@ -211,7 +199,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   z-index:1;
 }
 
-/* Wax seal */
 .wax-seal{
   position:absolute;top:52%;left:50%;
   transform:translate(-50%,-50%);
@@ -272,7 +259,6 @@ body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webki
   100%{opacity:0;transform:translateY(-280px) scale(1.4) rotate(180deg)}
 }
 
-/* ========== MAIN CONTENT ========== */
 #pages{position:absolute;top:0;left:0;width:100%;height:100%;background:#1a0f0a;z-index:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .page{min-height:100%;width:100%;padding:15px}
 #page2{display:none}
@@ -508,6 +494,8 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 
 <div id="frame">
 
+  <button id="muteBtn" onclick="toggleSound(event)" title="Toggle sound">🔊</button>
+
   <div id="envelope" onclick="openEnvelope()">
 
     <div class="dust">
@@ -653,15 +641,263 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 </div>
 
 <script>
+/* ============================================================
+   AUDIO ENGINE — lowered levels, harder limiting
+   ============================================================ */
+var audioCtx = null;
+var soundOn = true;
+var musicOn = false;
+var musicBus = null;
+var limiter = null;
+var reverbNode = null;
+var reverbGainNode = null;
+var musicTimer = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    // ---- HARD LIMITER (brick wall) ----
+    limiter = audioCtx.createDynamicsCompressor();
+    limiter.threshold.value = -20;    // limit very early
+    limiter.knee.value = 3;           // hard knee = strict
+    limiter.ratio.value = 20;         // maximum ratio
+    limiter.attack.value = 0.001;     // 1ms attack catches everything
+    limiter.release.value = 0.12;
+    limiter.connect(audioCtx.destination);
+
+    // ---- REVERB ----
+    var length = Math.floor(audioCtx.sampleRate * 1.6);
+    var impulse = audioCtx.createBuffer(2, length, audioCtx.sampleRate);
+    for (var ch = 0; ch < 2; ch++) {
+      var d = impulse.getChannelData(ch);
+      for (var i = 0; i < length; i++) {
+        d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 3);
+      }
+    }
+    reverbNode = audioCtx.createConvolver();
+    reverbNode.buffer = impulse;
+    reverbGainNode = audioCtx.createGain();
+    reverbGainNode.gain.value = 0.08;   // very dry
+    reverbNode.connect(reverbGainNode);
+    reverbGainNode.connect(limiter);
+
+    // ---- MUSIC BUS ----
+    musicBus = audioCtx.createGain();
+    musicBus.gain.value = 0.14;         // lowered again
+    musicBus.connect(limiter);
+    musicBus.connect(reverbNode);
+
+  } catch (e) {}
+}
+
+function toggleSound(e) {
+  if (e) e.stopPropagation();
+  soundOn = !soundOn;
+  var btn = document.getElementById('muteBtn');
+  if (soundOn) {
+    btn.innerHTML = '🔊';
+    btn.classList.remove('muted');
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (musicBus) musicBus.gain.setValueAtTime(0.14, audioCtx.currentTime);
+    if (!musicOn) startMusic();
+  } else {
+    btn.innerHTML = '🔇';
+    btn.classList.add('muted');
+    if (musicBus && audioCtx) musicBus.gain.setValueAtTime(0, audioCtx.currentTime);
+  }
+}
+
+/* ============================================
+   NOTES — A Aeolian
+   ============================================ */
+var N = {
+  A2: 110.00, B2: 123.47, C3: 130.81, D3: 146.83, E3: 164.81,
+  F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94, C4: 261.63,
+  D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00,
+  B4: 493.88, C5: 523.25, D5: 587.33
+};
+
+function playPluck(freq, t0, volume, duration) {
+  if (!audioCtx || !musicBus) return;
+
+  var o1 = audioCtx.createOscillator();
+  o1.type = 'sine';
+  o1.frequency.value = freq;
+
+  var o2 = audioCtx.createOscillator();
+  o2.type = 'sine';
+  o2.frequency.value = freq * 2;
+  var o2gain = audioCtx.createGain();
+  o2gain.gain.value = 0.10;
+
+  var amp = audioCtx.createGain();
+  amp.gain.setValueAtTime(0, t0);
+  amp.gain.linearRampToValueAtTime(volume, t0 + 0.01);
+  amp.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+
+  o1.connect(amp);
+  o2.connect(o2gain);
+  o2gain.connect(amp);
+  amp.connect(musicBus);
+
+  o1.start(t0);
+  o2.start(t0);
+  o1.stop(t0 + duration + 0.1);
+  o2.stop(t0 + duration + 0.1);
+}
+
+function playSoftPad(freq, t0, volume, duration) {
+  if (!audioCtx || !musicBus) return;
+
+  var o = audioCtx.createOscillator();
+  o.type = 'sine';
+  o.frequency.value = freq;
+
+  var amp = audioCtx.createGain();
+  amp.gain.setValueAtTime(0, t0);
+  amp.gain.linearRampToValueAtTime(volume, t0 + 2.2);
+  amp.gain.setValueAtTime(volume, t0 + duration - 2.5);
+  amp.gain.linearRampToValueAtTime(0, t0 + duration);
+
+  o.connect(amp);
+  amp.connect(musicBus);
+
+  o.start(t0);
+  o.stop(t0 + duration + 0.1);
+}
+
+/* ============================================
+   MUSIC — Am – F – C – G loop
+   ============================================ */
+var CHORDS = [
+  { bass: N.A2, pad1: N.A3, pad2: N.E4, arp: [N.A3, N.C4, N.E4, N.A4] },
+  { bass: N.F3, pad1: N.F3, pad2: N.C4, arp: [N.F3, N.A3, N.C4, N.F4] },
+  { bass: N.C3, pad1: N.C4, pad2: N.G4, arp: [N.C4, N.E4, N.G4, N.C5] },
+  { bass: N.G3, pad1: N.B3, pad2: N.D4, arp: [N.G3, N.B3, N.D4, N.G4] }
+];
+
+function startMusic() {
+  if (musicOn || !audioCtx || !soundOn) return;
+  musicOn = true;
+
+  var chordDur = 8;
+
+  function scheduleLoop() {
+    if (!musicOn || !audioCtx) return;
+    var t0 = audioCtx.currentTime + 0.15;
+
+    for (var i = 0; i < CHORDS.length; i++) {
+      var ct = t0 + i * chordDur;
+      var ch = CHORDS[i];
+
+      playSoftPad(ch.bass, ct, 0.03, chordDur - 0.5);
+      playSoftPad(ch.pad1, ct, 0.024, chordDur);
+      playSoftPad(ch.pad2, ct, 0.024, chordDur);
+
+      playPluck(ch.arp[0], ct + 0.3, 0.03, 3.0);
+      playPluck(ch.arp[1], ct + 2.0, 0.028, 3.0);
+      playPluck(ch.arp[2], ct + 3.8, 0.028, 3.0);
+      playPluck(ch.arp[3], ct + 5.6, 0.025, 3.5);
+    }
+
+    musicTimer = setTimeout(scheduleLoop, 30000);
+  }
+
+  scheduleLoop();
+}
+
+function stopMusic() {
+  musicOn = false;
+  if (musicTimer) {
+    clearTimeout(musicTimer);
+    musicTimer = null;
+  }
+}
+
+/* ============================================
+   SFX — 50% quieter across the board
+   ============================================ */
+
+function playTap() {
+  if (!soundOn || !audioCtx) return;
+  var t0 = audioCtx.currentTime;
+  var osc = audioCtx.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(130, t0);
+  osc.frequency.exponentialRampToValueAtTime(50, t0 + 0.14);
+  var amp = audioCtx.createGain();
+  amp.gain.setValueAtTime(0, t0);
+  amp.gain.linearRampToValueAtTime(0.03, t0 + 0.012);
+  amp.gain.exponentialRampToValueAtTime(0.001, t0 + 0.22);
+  osc.connect(amp);
+  amp.connect(limiter);
+  osc.start(t0);
+  osc.stop(t0 + 0.25);
+}
+
+function playNoise(duration, volume, delay, freq) {
+  if (!soundOn || !audioCtx) return;
+  delay = delay || 0;
+  volume = volume || 0.02;
+  freq = freq || 1600;
+  var t0 = audioCtx.currentTime + delay;
+  var len = Math.floor(audioCtx.sampleRate * duration);
+  var buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  var data = buffer.getChannelData(0);
+  for (var i = 0; i < len; i++) {
+    var env = Math.sin((i / len) * Math.PI);
+    data[i] = (Math.random() * 2 - 1) * env;
+  }
+  var src = audioCtx.createBufferSource();
+  src.buffer = buffer;
+  var filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = freq;
+  filter.Q.value = 0.8;
+  var amp = audioCtx.createGain();
+  amp.gain.value = volume;
+  src.connect(filter);
+  filter.connect(amp);
+  amp.connect(limiter);
+  src.start(t0);
+}
+
+/* ================================================
+   ENVELOPE OPEN
+   ================================================ */
 function openEnvelope() {
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (soundOn) playTap();
+
+  setTimeout(function() {
+    if (soundOn && !musicOn) startMusic();
+  }, 500);
+
   var envelope = document.getElementById('envelope');
   envelope.classList.add('hide');
+
+  // All swooshes halved from previous version
+  setTimeout(function() { if (soundOn) playNoise(0.28, 0.018, 0, 2200); }, 200);
+  setTimeout(function() { if (soundOn) playNoise(0.55, 0.015, 0, 1400); }, 700);
+  setTimeout(function() { if (soundOn) playNoise(0.4, 0.014, 0, 1100); }, 1600);
+  setTimeout(function() { if (soundOn) playNoise(0.5, 0.013, 0, 900); }, 3000);
+
   setTimeout(function() {
     envelope.style.display = 'none';
   }, 3800);
 }
 
+/* ================================================
+   QUIZ
+   ================================================ */
 function checkAnswer(btn, isCorrect) {
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
   document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('correct','wrong'));
   var feedback = document.getElementById('feedback');
   var continueBtn = document.getElementById('continueBtn');
@@ -672,15 +908,20 @@ function checkAnswer(btn, isCorrect) {
     feedback.style.color = "#062115";
     continueBtn.classList.add('show');
     if (hint) hint.style.display = 'none';
+    if (soundOn) playNoise(0.25, 0.015, 0, 2200);
   } else {
     btn.classList.add('wrong');
     feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
     feedback.style.color = "#c0392b";
     continueBtn.classList.remove('show');
+    if (soundOn) playNoise(0.2, 0.013, 0, 700);
   }
 }
 
 function goToPage2() {
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (soundOn) playNoise(0.4, 0.015, 0, 1600);
   var page2 = document.getElementById('page2');
   page2.style.display = 'block';
   setTimeout(function() {
@@ -693,6 +934,9 @@ function goToPage2() {
 }
 
 function goToPage1() {
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (soundOn) playTap();
   var page1 = document.getElementById('page1');
   try {
     page1.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -701,6 +945,9 @@ function goToPage1() {
   }
 }
 
+/* ================================================
+   COUNTDOWN
+   ================================================ */
 try {
   var target = new Date(2026, 10, 17, 11, 0, 0).getTime();
   function updateCountdown() {
@@ -719,6 +966,9 @@ try {
   setInterval(updateCountdown, 1000);
 } catch(e) {}
 
+/* ================================================
+   SCRATCH — HEART
+   ================================================ */
 try {
   var canvas = document.getElementById('scratchPad');
   var ctx = canvas.getContext('2d');
@@ -749,13 +999,24 @@ try {
   var drawing = false;
   var tracker = 0;
   var revealed = false;
+  var scratchSoundPlayed = false;
+
   function getPos(e) {
     var rect = canvas.getBoundingClientRect();
     var x = e.touches ? e.touches[0].clientX : e.clientX;
     var y = e.touches ? e.touches[0].clientY : e.clientY;
     return {x: x - rect.left, y: y - rect.top};
   }
-  function start(e) { drawing = true; scratch(e); }
+  function start(e) {
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    drawing = true;
+    if (!scratchSoundPlayed && soundOn) {
+      playNoise(0.22, 0.013, 0, 900);
+      scratchSoundPlayed = true;
+    }
+    scratch(e);
+  }
   function end() { drawing = false; ctx.beginPath(); }
   function scratch(e) {
     if (!drawing) return;
@@ -770,6 +1031,7 @@ try {
       if (tracker > 35) {
         hidden.classList.add('revealed');
         revealed = true;
+        if (soundOn) playNoise(0.6, 0.015, 0, 1400);
       }
     }
   }
@@ -782,6 +1044,9 @@ try {
   canvas.addEventListener('touchend', end);
 } catch(e) {}
 
+/* ================================================
+   SCRATCH — RECTANGLE
+   ================================================ */
 try {
   var canvasR = document.getElementById('scratchRect');
   var ctxR = canvasR.getContext('2d');
@@ -804,13 +1069,24 @@ try {
   ctxR.lineCap = 'round';
   ctxR.lineJoin = 'round';
   var drawingR = false;
+  var rectScratchSoundPlayed = false;
+
   function getPosR(e) {
     var rect = canvasR.getBoundingClientRect();
     var x = e.touches ? e.touches[0].clientX : e.clientX;
     var y = e.touches ? e.touches[0].clientY : e.clientY;
     return {x: x - rect.left, y: y - rect.top};
   }
-  function startR(e) { drawingR = true; scratchR(e); }
+  function startR(e) {
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    drawingR = true;
+    if (!rectScratchSoundPlayed && soundOn) {
+      playNoise(0.22, 0.013, 0, 900);
+      rectScratchSoundPlayed = true;
+    }
+    scratchR(e);
+  }
   function endR() { drawingR = false; ctxR.beginPath(); }
   function scratchR(e) {
     if (!drawingR) return;
