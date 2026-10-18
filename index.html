@@ -4,11 +4,70 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Invitation | Nawaz & Turfa</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cinzel+Decorative:wght@700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
+
+/* Language toggle button */
+#langBtn{
+  position:absolute;top:14px;left:14px;z-index:999;
+  padding:8px 16px;height:38px;border-radius:19px;
+  background:rgba(212,175,55,0.15);
+  border:1px solid rgba(212,175,55,0.5);
+  color:#D4AF37;font-size:13px;font-family:'Cinzel Decorative',serif;font-weight:700;
+  letter-spacing:1px;cursor:pointer;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  transition:all 0.25s ease;touch-action:manipulation;
+  display:flex;justify-content:center;align-items:center;
+}
+#langBtn:active{transform:scale(0.95)}
+#langBtn.hindi{color:#FDF5E6;background:rgba(10,51,35,0.9);border-color:rgba(212,175,55,0.8);font-family:'Noto Sans Devanagari',sans-serif;letter-spacing:0.5px}
+
+/* Hindi (Devanagari) mode */
+body.hindi-mode .invite,
+body.hindi-mode .quiz-head,
+body.hindi-mode .quiz-subhead,
+body.hindi-mode .quiz-q,
+body.hindi-mode .quiz-btn,
+body.hindi-mode #feedback,
+body.hindi-mode .quiz-tap-hint,
+body.hindi-mode #continueBtn,
+body.hindi-mode .scratch-title,
+body.hindi-mode .secret-date span,
+body.hindi-mode .countdown-title,
+body.hindi-mode .time-box p,
+body.hindi-mode .back-link,
+body.hindi-mode .quiz-unlock-banner,
+body.hindi-mode .details,
+body.hindi-mode .details .time,
+body.hindi-mode .secret-trans {
+  font-family:'Noto Sans Devanagari','Playfair Display',sans-serif;
+  font-style:normal;
+  letter-spacing:0.3px;
+  line-height:1.7;
+}
+
+body.hindi-mode .invite { font-size:17px; line-height:1.8; }
+body.hindi-mode .quiz-head { font-size:16px; }
+body.hindi-mode .quiz-subhead { font-size:10px; letter-spacing:2px; }
+body.hindi-mode .quiz-q { font-size:15px; line-height:1.7; }
+body.hindi-mode .quiz-btn { font-size:15px; line-height:1.6; padding:14px 16px; }
+body.hindi-mode #feedback { font-size:14px; line-height:1.7; }
+body.hindi-mode .quiz-tap-hint { font-size:9px; letter-spacing:1.5px; }
+body.hindi-mode #continueBtn { font-size:14px; padding:14px 30px; line-height:1.5; }
+body.hindi-mode .scratch-title { font-size:15px; line-height:1.6; }
+body.hindi-mode .secret-date { line-height:1.5; font-size:26px; }
+body.hindi-mode .secret-date span { font-size:12px; margin-bottom:6px; letter-spacing:0.5px; }
+body.hindi-mode .countdown-title { font-size:12px; line-height:1.6; }
+body.hindi-mode .time-box p { font-size:9px; letter-spacing:0.5px; line-height:1.4; }
+body.hindi-mode .back-link { font-size:13px; line-height:1.6; padding:11px 24px; }
+body.hindi-mode .quiz-unlock-banner { font-size:14px; line-height:1.6; }
+body.hindi-mode .details { font-size:16px; line-height:1.9; }
+body.hindi-mode .details .time { font-size:16px; line-height:1.6; }
+body.hindi-mode .secret-trans { font-size:13px; line-height:1.7; padding:12px; }
+
 #envelope{position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at 50% 50%, #0A3323 0%, #062115 60%, #02100a 100%);display:flex;justify-content:center;align-items:center;z-index:50;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:opacity 0.7s ease 3s;overflow:hidden;transform:translateZ(0)}
 #envelope.hide{opacity:0;pointer-events:none}
 #envelope:before{content:'';position:absolute;top:50%;left:50%;width:500px;height:500px;margin:-250px 0 0 -250px;background:radial-gradient(circle,rgba(212,175,55,0.5) 0%,rgba(212,175,55,0.18) 32%,rgba(212,175,55,0.05) 55%,transparent 75%);border-radius:50%;pointer-events:none;animation:haloPulse 3s ease-in-out infinite;transform:translateZ(0);will-change:transform,opacity}
@@ -148,6 +207,8 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 <body>
 
 <div id="frame">
+  <button id="langBtn" onclick="toggleLanguage()">हिंदी</button>
+
   <div id="envelope" onclick="openEnvelope()">
     <div class="dust">
       <div class="dust-particle" style="left:8%;animation-duration:8s;animation-delay:0s"></div>
@@ -205,18 +266,18 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
         <div class="ayah" dir="rtl">يَا أَيُّهَا النَّاسُ اتَّقُوا رَبَّكُمُ الَّذِي خَلَقَكُم مِّن نَّفْسٍ وَاحِدَةٍ وَخَلَقَ مِنْهَا زَوْجَهَا...</div>
         <div class="divider"><span>✦</span></div>
         <div class="couple">Nawaz <span class="heart">❤️</span> Turfa</div>
-        <div class="invite">request the honor of your presence<br>at their Walima.</div>
+        <div class="invite" id="inviteText">request the honor of your presence<br>at their Walima.</div>
         <div class="divider"><span>✦</span></div>
         <div class="quiz-hint-arrow">▼</div>
-        <div class="quiz-unlock-banner">Answer below to unlock the date & venue</div>
+        <div class="quiz-unlock-banner" id="unlockBanner">Answer below to unlock the date & venue</div>
         <div class="quiz">
-          <div class="quiz-head">🔒 Answer to Unlock Invitation Details</div>
-          <div class="quiz-subhead">Tap an answer to continue</div>
-          <div class="quiz-q">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
-          <button class="quiz-btn" data-correct="false" onclick="checkAnswer(this,false)">Charity (Sadaqah)</button>
-          <button class="quiz-btn" data-correct="true" onclick="checkAnswer(this,true)">Marriage (Nikah)</button>
+          <div class="quiz-head" id="quizHead">🔒 Answer to Unlock Invitation Details</div>
+          <div class="quiz-subhead" id="quizSubhead">Tap an answer to continue</div>
+          <div class="quiz-q" id="quizQ">In Islam, what beautiful act is said to complete half of one's faith (Deen)?</div>
+          <button class="quiz-btn" id="ans1" data-correct="false" onclick="checkAnswer(this,false)">Charity (Sadaqah)</button>
+          <button class="quiz-btn" id="ans2" data-correct="true" onclick="checkAnswer(this,true)">Marriage (Nikah)</button>
           <div id="feedback"></div>
-          <div class="quiz-tap-hint">Tap an answer above</div>
+          <div class="quiz-tap-hint" id="tapHint">Tap an answer above</div>
           <button id="continueBtn" onclick="goToPage2()">Reveal Invitation Details →</button>
         </div>
       </div>
@@ -237,242 +298,210 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
         <br>
         <div class="couple" style="font-size:52px">The Details</div>
         <div class="divider"><span>✦</span></div>
-        <div class="details">
-          <span class="time">11:00 in the morning</span>
-          Islam Pura, Nr Subjail Road
+        <div class="details" id="detailsBlock">
+          <span class="time" id="detailsTime">11:00 in the morning</span>
+          <span id="detailsVenue">Islam Pura, Nr Subjail Road</span>
         </div>
         <div class="scratch-section">
-          <div class="scratch-title">Scratch the heart to reveal the date</div>
+          <div class="scratch-title" id="scratchTitle">Scratch the heart to reveal the date</div>
           <div class="scratch-wrap" id="scratchWrap">
             <div class="secret-date">
-              <span>DATE OF WALIMA</span>
-              17 November<br>2026
+              <span id="secretLabel">DATE OF WALIMA</span>
+              <span id="secretDateText">17 November<br>2026</span>
             </div>
             <canvas id="scratchPad"></canvas>
           </div>
           <div class="hidden" id="hiddenElements">
-            <div class="countdown-title">Time Until Walima</div>
+            <div class="countdown-title" id="cdTitle">Time Until Walima</div>
             <div class="countdown">
-              <div class="time-box"><span id="cdDays">00</span><p>Days</p></div>
-              <div class="time-box"><span id="cdHours">00</span><p>Hrs</p></div>
-              <div class="time-box"><span id="cdMins">00</span><p>Mins</p></div>
+              <div class="time-box"><span id="cdDays">00</span><p id="cdDaysLabel">Days</p></div>
+              <div class="time-box"><span id="cdHours">00</span><p id="cdHoursLabel">Hrs</p></div>
+              <div class="time-box"><span id="cdMins">00</span><p id="cdMinsLabel">Mins</p></div>
             </div>
-            <div class="scratch-title">Scratch for the Ayah Translation</div>
+            <div class="scratch-title" id="transTitle">Scratch for the Ayah Translation</div>
             <div class="scratch-rect">
-              <div class="secret-trans">"O mankind, fear your Lord, who created you from one soul and created from it its mate..."</div>
+              <div class="secret-trans" id="transText">"O mankind, fear your Lord, who created you from one soul and created from it its mate..."</div>
               <canvas id="scratchRect"></canvas>
             </div>
           </div>
         </div>
         <br><br>
-        <button class="back-link" onclick="goToPage1()">← Back to the beginning</button>
+        <button class="back-link" id="backBtn" onclick="goToPage1()">← Back to the beginning</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ============================================================
-   AUDIO — scratch swoosh + warm quiz feedback
-   ============================================================ */
-var audioCtx = null;
-var soundOn = true;
-var sfxBus = null;
-var sfxLowpass = null;
-var noiseBuffer = null;
+var currentLang = 'en';
 
-function initAudio() {
-  if (audioCtx) return;
+var translations = {
+  en: {
+    langBtn: 'हिंदी',
+    inviteText: 'request the honor of your presence<br>at their Walima.',
+    unlockBanner: 'Answer below to unlock the date & venue',
+    quizHead: '🔒 Answer to Unlock Invitation Details',
+    quizSubhead: 'Tap an answer to continue',
+    quizQ: 'In Islam, what beautiful act is said to complete half of one\'s faith (Deen)?',
+    ans1: 'Charity (Sadaqah)',
+    ans2: 'Marriage (Nikah)',
+    tapHint: 'Tap an answer above',
+    continueBtn: 'Reveal Invitation Details →',
+    feedbackCorrect: "Masha'Allah, that is correct! ✨",
+    feedbackWrong: "SubhanAllah, charity is beautiful, but try again!",
+    scratchTitle: 'Scratch the heart to reveal the date',
+    secretLabel: 'DATE OF WALIMA',
+    secretDateText: '17 November<br>2026',
+    cdTitle: 'Time Until Walima',
+    cdDaysLabel: 'Days',
+    cdHoursLabel: 'Hrs',
+    cdMinsLabel: 'Mins',
+    transTitle: 'Scratch for the Ayah Translation',
+    transText: '"O mankind, fear your Lord, who created you from one soul and created from it its mate..."',
+    backBtn: '← Back to the beginning',
+    detailsTime: '11:00 in the morning',
+    detailsVenue: 'Islam Pura, Nr Subjail Road'
+  },
+  hi: {
+    langBtn: 'English',
+    inviteText: 'आपकी हाज़री की गुज़ारिश करते है<br>दाअवते वलीमा में',
+    unlockBanner: 'तारीख़ और जगह देखने के लिए नीचे जवाब दें',
+    quizHead: '🔒 इनविटेशन की तफ़सीलात देखने के लिए जवाब दें',
+    quizSubhead: 'जारी रखने के लिए जवाब पर टैप करें',
+    quizQ: 'इस्लाम में, कौन सा ख़ूबसूरत अमल आधे ईमान (दीन) को पूरा करता है?',
+    ans1: 'सदक़ा (ख़ैरात)',
+    ans2: 'निकाह (शादी)',
+    tapHint: 'ऊपर किसी जवाब पर टैप करें',
+    continueBtn: 'इनविटेशन की तफ़सीलात देखें →',
+    feedbackCorrect: 'माशाअल्लाह, बिल्कुल सही! ✨',
+    feedbackWrong: 'सुभानअल्लाह, सदक़ा भी बहुत अच्छा है, लेकिन एक बार फिर कोशिश करें!',
+    scratchTitle: 'तारीख़ देखने के लिए दिल स्क्रेच करे',
+    secretLabel: 'दाअवते वलीमा की तारीख',
+    secretDateText: '17 नवंबर<br>2026',
+    cdTitle: 'वलीमा तक का वक़्त',
+    cdDaysLabel: 'दिन',
+    cdHoursLabel: 'घंटे',
+    cdMinsLabel: 'मिनट',
+    transTitle: 'आयत के तर्जुमे के लिए स्क्रेच करे',
+    transText: '"ऐ लोगो! अपने रब से डरो जिसने तुम्हें एक जान से पैदा किया और उसी से उसका जोड़ा बनाया..."',
+    backBtn: '← शुरू से दोबारा देखें',
+    detailsTime: 'सुबह 11:00 बजे',
+    detailsVenue: 'इस्लाम पूरा, सबजेल रोड के पास'
+  }
+};
+
+function applyLanguage(lang) {
+  var t = translations[lang];
+  currentLang = lang;
+  document.body.classList.toggle('hindi-mode', lang === 'hi');
+
+  document.getElementById('langBtn').innerText = t.langBtn;
+  document.getElementById('langBtn').classList.toggle('hindi', lang === 'hi');
+
+  document.getElementById('inviteText').innerHTML = t.inviteText;
+  document.getElementById('unlockBanner').innerText = t.unlockBanner;
+  document.getElementById('quizHead').innerText = t.quizHead;
+  document.getElementById('quizSubhead').innerText = t.quizSubhead;
+  document.getElementById('quizQ').innerText = t.quizQ;
+  document.getElementById('ans1').innerText = t.ans1;
+  document.getElementById('ans2').innerText = t.ans2;
+  document.getElementById('tapHint').innerText = t.tapHint;
+  document.getElementById('continueBtn').innerText = t.continueBtn;
+  document.getElementById('scratchTitle').innerText = t.scratchTitle;
+  document.getElementById('secretLabel').innerText = t.secretLabel;
+  document.getElementById('secretDateText').innerHTML = t.secretDateText;
+  document.getElementById('cdTitle').innerText = t.cdTitle;
+  document.getElementById('cdDaysLabel').innerText = t.cdDaysLabel;
+  document.getElementById('cdHoursLabel').innerText = t.cdHoursLabel;
+  document.getElementById('cdMinsLabel').innerText = t.cdMinsLabel;
+  document.getElementById('transTitle').innerText = t.transTitle;
+  document.getElementById('transText').innerText = t.transText;
+  document.getElementById('backBtn').innerText = t.backBtn;
+  document.getElementById('detailsTime').innerText = t.detailsTime;
+  document.getElementById('detailsVenue').innerText = t.detailsVenue;
+
+  var fb = document.getElementById('feedback');
+  if (fb.innerText.trim() !== '') {
+    var correctBtn = document.querySelector('.quiz-btn.correct');
+    var wrongBtn = document.querySelector('.quiz-btn.wrong');
+    if (correctBtn) fb.innerHTML = t.feedbackCorrect;
+    else if (wrongBtn) fb.innerHTML = t.feedbackWrong;
+  }
+}
+
+function toggleLanguage() {
+  var newLang = currentLang === 'en' ? 'hi' : 'en';
+  try { localStorage.setItem('walima_lang', newLang); } catch(e) {}
+  applyLanguage(newLang);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
   try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-    sfxLowpass = audioCtx.createBiquadFilter();
-    sfxLowpass.type = 'lowpass';
-    sfxLowpass.frequency.value = 3500;
-    sfxLowpass.Q.value = 0.7;
-
-    var limiter = audioCtx.createDynamicsCompressor();
-    limiter.threshold.value = -26;
-    limiter.knee.value = 2;
-    limiter.ratio.value = 20;
-    limiter.attack.value = 0.001;
-    limiter.release.value = 0.1;
-    limiter.connect(audioCtx.destination);
-
-    sfxLowpass.connect(limiter);
-
-    sfxBus = audioCtx.createGain();
-    sfxBus.gain.value = 1;
-    sfxBus.connect(sfxLowpass);
-
-    var nlen = Math.floor(audioCtx.sampleRate * 0.6);
-    noiseBuffer = audioCtx.createBuffer(1, nlen, audioCtx.sampleRate);
-    var nd = noiseBuffer.getChannelData(0);
-    for (var j = 0; j < nlen; j++) {
-      nd[j] = (Math.random() * 2 - 1);
+    var saved = localStorage.getItem('walima_lang');
+    if (saved && translations[saved]) {
+      applyLanguage(saved);
     }
-  } catch (e) {}
-}
+  } catch(e) {}
+});
 
-/* Scratch swoosh */
-function playScratchSwoosh() {
-  if (!soundOn || !audioCtx || !noiseBuffer || !sfxBus) return;
-  try {
-    var duration = 0.28;
-    var t0 = audioCtx.currentTime;
-    var src = audioCtx.createBufferSource();
-    src.buffer = noiseBuffer;
-    var amp = audioCtx.createGain();
-    amp.gain.setValueAtTime(0, t0);
-    amp.gain.linearRampToValueAtTime(0.012, t0 + duration * 0.35);
-    amp.gain.linearRampToValueAtTime(0, t0 + duration);
-    var filter = audioCtx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.value = 900;
-    filter.Q.value = 0.8;
-    src.connect(filter);
-    filter.connect(amp);
-    amp.connect(sfxBus);
-    src.start(t0);
-    src.stop(t0 + duration + 0.05);
-  } catch (e) {}
-}
-
-/* Correct answer — WARM "answered" tone
-   Two soft sine notes in perfect fifth, joined smoothly.
-   Feels like a warm acknowledgment, not a notification ping. */
-function playCorrectChime() {
-  if (!soundOn || !audioCtx || !sfxBus) return;
-  try {
-    var t0 = audioCtx.currentTime;
-
-    // Note 1 — C4 (warm, middle)
-    var o1 = audioCtx.createOscillator();
-    o1.type = 'sine';
-    o1.frequency.value = 261.63;
-    var a1 = audioCtx.createGain();
-    a1.gain.setValueAtTime(0, t0);
-    a1.gain.linearRampToValueAtTime(0.055, t0 + 0.05);   // slow attack, warm
-    a1.gain.setValueAtTime(0.055, t0 + 0.2);
-    a1.gain.exponentialRampToValueAtTime(0.001, t0 + 0.9);
-    o1.connect(a1);
-    a1.connect(sfxBus);
-    o1.start(t0);
-    o1.stop(t0 + 0.95);
-
-    // Note 2 — G4 (a fifth above, slightly delayed, joins the first)
-    var o2 = audioCtx.createOscillator();
-    o2.type = 'sine';
-    o2.frequency.value = 392.00;
-    var a2 = audioCtx.createGain();
-    a2.gain.setValueAtTime(0, t0 + 0.08);
-    a2.gain.linearRampToValueAtTime(0.045, t0 + 0.15);
-    a2.gain.setValueAtTime(0.045, t0 + 0.35);
-    a2.gain.exponentialRampToValueAtTime(0.001, t0 + 1.1);
-    o2.connect(a2);
-    a2.connect(sfxBus);
-    o2.start(t0 + 0.08);
-    o2.stop(t0 + 1.15);
-
-    // Note 3 — C5 (octave up, softer, adds "lift" at the end)
-    var o3 = audioCtx.createOscillator();
-    o3.type = 'sine';
-    o3.frequency.value = 523.25;
-    var a3 = audioCtx.createGain();
-    a3.gain.setValueAtTime(0, t0 + 0.25);
-    a3.gain.linearRampToValueAtTime(0.028, t0 + 0.32);
-    a3.gain.exponentialRampToValueAtTime(0.001, t0 + 1.2);
-    o3.connect(a3);
-    a3.connect(sfxBus);
-    o3.start(t0 + 0.25);
-    o3.stop(t0 + 1.25);
-  } catch (e) {}
-}
-
-/* Wrong answer — soft descending "no" (gentle, informative) */
-function playWrongBuzz() {
-  if (!soundOn || !audioCtx || !sfxBus) return;
-  try {
-    var t0 = audioCtx.currentTime;
-
-    // Low note — D3
-    var o1 = audioCtx.createOscillator();
-    o1.type = 'sine';
-    o1.frequency.value = 146.83;
-    var a1 = audioCtx.createGain();
-    a1.gain.setValueAtTime(0, t0);
-    a1.gain.linearRampToValueAtTime(0.05, t0 + 0.03);
-    a1.gain.exponentialRampToValueAtTime(0.001, t0 + 0.5);
-    o1.connect(a1);
-    a1.connect(sfxBus);
-    o1.start(t0);
-    o1.stop(t0 + 0.55);
-
-    // Even lower — A2 (slight descend for "wrong" feel)
-    var o2 = audioCtx.createOscillator();
-    o2.type = 'sine';
-    o2.frequency.value = 110.00;
-    var a2 = audioCtx.createGain();
-    a2.gain.setValueAtTime(0, t0 + 0.15);
-    a2.gain.linearRampToValueAtTime(0.045, t0 + 0.2);
-    a2.gain.exponentialRampToValueAtTime(0.001, t0 + 0.7);
-    o2.connect(a2);
-    a2.connect(sfxBus);
-    o2.start(t0 + 0.15);
-    o2.stop(t0 + 0.75);
-  } catch (e) {}
-}
-
+/* ============================================================
+   ENVELOPE + QUIZ + NAVIGATION
+   ============================================================ */
 function openEnvelope() {
-  initAudio();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   var envelope = document.getElementById('envelope');
   envelope.classList.add('hide');
   setTimeout(function() { envelope.style.display = 'none'; }, 3800);
 }
 
 function checkAnswer(btn, isCorrect) {
-  initAudio();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  document.querySelectorAll('.quiz-btn').forEach(function(b) { b.classList.remove('correct', 'wrong'); });
   var feedback = document.getElementById('feedback');
   var continueBtn = document.getElementById('continueBtn');
   var hint = document.querySelector('.quiz-tap-hint');
+  var t = translations[currentLang];
+  document.querySelectorAll('.quiz-btn').forEach(function(b) { b.classList.remove('correct','wrong'); });
   if (isCorrect) {
     btn.classList.add('correct');
-    feedback.innerHTML = "Masha'Allah, that is correct! ✨";
+    feedback.innerHTML = t.feedbackCorrect;
     feedback.style.color = "#062115";
     continueBtn.classList.add('show');
     if (hint) hint.style.display = 'none';
-    playCorrectChime();
   } else {
     btn.classList.add('wrong');
-    feedback.innerHTML = "SubhanAllah, charity is beautiful, but try again!";
+    feedback.innerHTML = t.feedbackWrong;
     feedback.style.color = "#c0392b";
     continueBtn.classList.remove('show');
-    playWrongBuzz();
   }
 }
 
+/* FIXED: Smooth scroll so both pages remain accessible by swiping up/down */
 function goToPage2() {
-  initAudio();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   var page2 = document.getElementById('page2');
+  var container = document.getElementById('pages');
   page2.style.display = 'block';
+  
+  // Smooth scroll down to page 2
   setTimeout(function() {
-    try { page2.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    catch (e) { document.getElementById('pages').scrollTop = page2.offsetTop; }
+    try {
+      page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) {
+      container.scrollTop = page2.offsetTop;
+    }
   }, 30);
 }
 
+/* FIXED: Smooth scroll back up to page 1 */
 function goToPage1() {
-  initAudio();
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
   var page1 = document.getElementById('page1');
-  try { page1.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  catch (e) { document.getElementById('pages').scrollTop = 0; }
+  try {
+    page1.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    document.getElementById('pages').scrollTop = 0;
+  }
 }
 
+/* ============================================================
+   COUNTDOWN
+   ============================================================ */
 try {
   var target = new Date(2026, 10, 17, 11, 0, 0).getTime();
   function updateCountdown() {
@@ -491,6 +520,9 @@ try {
   setInterval(updateCountdown, 1000);
 } catch(e) {}
 
+/* ============================================================
+   HEART SCRATCH
+   ============================================================ */
 try {
   var canvas = document.getElementById('scratchPad');
   var ctx = canvas.getContext('2d');
@@ -521,23 +553,13 @@ try {
   var drawing = false;
   var tracker = 0;
   var revealed = false;
-  var scratchSoundPlayed = false;
   function getPos(e) {
     var rect = canvas.getBoundingClientRect();
     var x = e.touches ? e.touches[0].clientX : e.clientX;
     var y = e.touches ? e.touches[0].clientY : e.clientY;
     return {x: x - rect.left, y: y - rect.top};
   }
-  function start(e) {
-    initAudio();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    drawing = true;
-    if (!scratchSoundPlayed && soundOn) {
-      playScratchSwoosh();
-      scratchSoundPlayed = true;
-    }
-    scratch(e);
-  }
+  function start(e) { drawing = true; scratch(e); }
   function end() { drawing = false; ctx.beginPath(); }
   function scratch(e) {
     if (!drawing) return;
@@ -561,6 +583,9 @@ try {
   canvas.addEventListener('touchend', end);
 } catch(e) {}
 
+/* ============================================================
+   AYAH TRANSLATION SCRATCH
+   ============================================================ */
 try {
   var canvasR = document.getElementById('scratchRect');
   var ctxR = canvasR.getContext('2d');
@@ -583,23 +608,13 @@ try {
   ctxR.lineCap = 'round';
   ctxR.lineJoin = 'round';
   var drawingR = false;
-  var rectScratchSoundPlayed = false;
   function getPosR(e) {
     var rect = canvasR.getBoundingClientRect();
     var x = e.touches ? e.touches[0].clientX : e.clientX;
     var y = e.touches ? e.touches[0].clientY : e.clientY;
     return {x: x - rect.left, y: y - rect.top};
   }
-  function startR(e) {
-    initAudio();
-    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-    drawingR = true;
-    if (!rectScratchSoundPlayed && soundOn) {
-      playScratchSwoosh();
-      rectScratchSoundPlayed = true;
-    }
-    scratchR(e);
-  }
+  function startR(e) { drawingR = true; scratchR(e); }
   function endR() { drawingR = false; ctxR.beginPath(); }
   function scratchR(e) {
     if (!drawingR) return;
