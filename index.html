@@ -10,20 +10,38 @@
 body{font-family:'Playfair Display',serif;background:#111;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 #frame{position:fixed;top:0;bottom:0;left:0;right:0;margin:auto;width:100%;max-width:414px;background:#000;overflow:hidden}
 
-/* Language toggle button */
+/* ============================================================
+   HIGHLIGHTED LANGUAGE BUTTON (Glowing & Noticeable)
+   ============================================================ */
 #langBtn{
   position:absolute;top:14px;left:14px;z-index:999;
-  padding:8px 16px;height:38px;border-radius:19px;
-  background:rgba(212,175,55,0.15);
-  border:1px solid rgba(212,175,55,0.5);
-  color:#D4AF37;font-size:13px;font-family:'Cinzel Decorative',serif;font-weight:700;
+  padding:8px 18px;height:40px;border-radius:20px;
+  background:linear-gradient(135deg, #0A3323, #04140d);
+  border:1.5px solid #D4AF37;
+  color:#FDF5E6;font-size:14px;font-family:'Cinzel Decorative',serif;font-weight:700;
   letter-spacing:1px;cursor:pointer;
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   transition:all 0.25s ease;touch-action:manipulation;
-  display:flex;justify-content:center;align-items:center;
+  display:flex;justify-content:center;align-items:center;gap:6px;
+  box-shadow:0 4px 15px rgba(212,175,55,0.4);
+  animation:langPulse 2s infinite alternate;
 }
 #langBtn:active{transform:scale(0.95)}
-#langBtn.hindi{color:#FDF5E6;background:rgba(10,51,35,0.9);border-color:rgba(212,175,55,0.8);font-family:'Noto Sans Devanagari',sans-serif;letter-spacing:0.5px}
+
+/* Different style when switched to Hindi mode */
+#langBtn.hindi{
+  color:#0A3323;
+  background:linear-gradient(135deg, #FDF5E6, #E8D5A5);
+  border-color:#8A6511;
+  font-family:'Noto Sans Devanagari',sans-serif;
+  letter-spacing:0.5px;
+  box-shadow:0 4px 15px rgba(253,245,230,0.6);
+}
+
+@keyframes langPulse{
+  0% { box-shadow:0 4px 15px rgba(212,175,55,0.3), 0 0 0 0 rgba(212,175,55,0.6); }
+  100% { box-shadow:0 4px 15px rgba(212,175,55,0.5), 0 0 0 12px rgba(212,175,55,0); }
+}
 
 /* Hindi (Devanagari) mode */
 body.hindi-mode .invite,
@@ -207,7 +225,7 @@ canvas{position:absolute;top:0;left:0;z-index:2;touch-action:none;cursor:crossha
 <body>
 
 <div id="frame">
-  <button id="langBtn" onclick="toggleLanguage()">हिंदी</button>
+  <button id="langBtn" onclick="toggleLanguage()">🌐 हिंदी</button>
 
   <div id="envelope" onclick="openEnvelope()">
     <div class="dust">
@@ -337,7 +355,7 @@ var currentLang = 'en';
 
 var translations = {
   en: {
-    langBtn: 'हिंदी',
+    langBtn: '🌐 हिंदी',
     inviteText: 'request the honor of your presence<br>at their Walima.',
     unlockBanner: 'Answer below to unlock the date & venue',
     quizHead: '🔒 Answer to Unlock Invitation Details',
@@ -363,7 +381,7 @@ var translations = {
     detailsVenue: 'Islam Pura, Nr Subjail Road'
   },
   hi: {
-    langBtn: 'English',
+    langBtn: '🌐 English',
     inviteText: 'आपकी हाज़री की गुज़ारिश करते है<br>दाअवते वलीमा में',
     unlockBanner: 'तारीख़ और जगह देखने के लिए नीचे जवाब दें',
     quizHead: '🔒 इनविटेशन की तफ़सीलात देखने के लिए जवाब दें',
@@ -473,13 +491,10 @@ function checkAnswer(btn, isCorrect) {
   }
 }
 
-/* FIXED: Smooth scroll so both pages remain accessible by swiping up/down */
 function goToPage2() {
   var page2 = document.getElementById('page2');
   var container = document.getElementById('pages');
   page2.style.display = 'block';
-  
-  // Smooth scroll down to page 2
   setTimeout(function() {
     try {
       page2.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -489,7 +504,6 @@ function goToPage2() {
   }, 30);
 }
 
-/* FIXED: Smooth scroll back up to page 1 */
 function goToPage1() {
   var page1 = document.getElementById('page1');
   try {
